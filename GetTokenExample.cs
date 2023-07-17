@@ -8,6 +8,6 @@ namespace Snowrunner_Parcher
 {
     internal class GetTokenExample
     {
-
+        
     }
 }
