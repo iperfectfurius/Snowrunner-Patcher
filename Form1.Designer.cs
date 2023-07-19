@@ -32,6 +32,7 @@
             menuStrip1 = new MenuStrip();
             configToolStripMenuItem = new ToolStripMenuItem();
             changeModPathToolStripMenuItem = new ToolStripMenuItem();
+            openConfigFileToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -55,7 +56,7 @@
             // 
             // configToolStripMenuItem
             // 
-            configToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeModPathToolStripMenuItem });
+            configToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeModPathToolStripMenuItem, openConfigFileToolStripMenuItem });
             configToolStripMenuItem.Name = "configToolStripMenuItem";
             configToolStripMenuItem.Size = new Size(55, 20);
             configToolStripMenuItem.Text = "Config";
@@ -65,6 +66,13 @@
             changeModPathToolStripMenuItem.Name = "changeModPathToolStripMenuItem";
             changeModPathToolStripMenuItem.Size = new Size(180, 22);
             changeModPathToolStripMenuItem.Text = "Change Mod Path";
+            // 
+            // openConfigFileToolStripMenuItem
+            // 
+            openConfigFileToolStripMenuItem.Name = "openConfigFileToolStripMenuItem";
+            openConfigFileToolStripMenuItem.Size = new Size(180, 22);
+            openConfigFileToolStripMenuItem.Text = "Open Config File";
+            openConfigFileToolStripMenuItem.Click += openConfigFileToolStripMenuItem_Click;
             // 
             // Form1
             // 
@@ -89,5 +97,6 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem configToolStripMenuItem;
         private ToolStripMenuItem changeModPathToolStripMenuItem;
+        private ToolStripMenuItem openConfigFileToolStripMenuItem;
     }
 }

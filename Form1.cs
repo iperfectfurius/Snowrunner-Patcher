@@ -1,20 +1,22 @@
 using EasyConfig;
+using System.Reflection;
+
 namespace Snowrunner_Parcher
 {
     public partial class Form1 : Form
     {
-        private Config cf = new();
         private string Token;
         private bool IsIniConfigLoaded = false;
+        private static readonly Dictionary<(string, string), string> DefaultConfig =
+            new() { { ("App", "Version"), Assembly.GetExecutingAssembly().GetName().Version.ToString() }, { ("Game", "ModVersion"), "0" } };
+        private Config cf = new(defaultConfig: DefaultConfig);
         public Form1()
         {
             InitializeComponent();
+            CheckConfig();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            CheckConfig();
-
             CheckForUpdates();
         }
         private void CheckConfig()
@@ -29,7 +31,7 @@ namespace Snowrunner_Parcher
             if (!ChangeModPath())
             {
                 MessageBox.Show("In order to apply the patch, we need to configure the destination path for the pack mods folder.", "Atention", MessageBoxButtons.OK);
-                Close();
+                Environment.Exit(1);
             }
             IsIniConfigLoaded = true;
 
@@ -56,6 +58,11 @@ namespace Snowrunner_Parcher
         {
             Token = await GetToken.GetTokenFromRequest();
             //label1.Text = pepi;
+        }
+
+        private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            cf.OpenConfig();
         }
     }
 }
