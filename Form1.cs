@@ -1,4 +1,7 @@
 using EasyConfig;
+using IniParser.Model.Formatting;
+using Microsoft.VisualBasic;
+using RestSharp;
 using System.Reflection;
 
 namespace Snowrunner_Parcher
@@ -7,17 +10,27 @@ namespace Snowrunner_Parcher
     {
         private string Token;
         private bool IsIniConfigLoaded = false;
+        private static readonly string APP_VERSION = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         private static readonly Dictionary<(string, string), string> DefaultConfig =
-            new() { { ("App", "Version"), Assembly.GetExecutingAssembly().GetName().Version.ToString() }, { ("Game", "ModVersion"), "0" } };
+            new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" } };
         private Config cf = new(defaultConfig: DefaultConfig);
+        private string ModVersion;
+
         public Form1()
         {
             InitializeComponent();
+            IniForm();
             CheckConfig();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             CheckForUpdates();
+        }
+        private void IniForm()
+        {
+            VersionAppLabel.Text = APP_VERSION;
+            ModVersion = cf.ConfigData["Game"]["ModVersion"];
+            ModVersionLabel.Text += ModVersion;
         }
         private void CheckConfig()
         {
@@ -57,7 +70,25 @@ namespace Snowrunner_Parcher
         private async void CheckForUpdates()
         {
             Token = await GetToken.GetTokenFromRequest();
-            //label1.Text = pepi;
+            await CheckModVersion();
+        }
+
+        private async Task<bool> CheckModVersion()
+        {
+            RestClient RestClient = new(@"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/Version.txt");
+            RestRequest request = new RestRequest();
+            request.AddHeader("Authorization", $"token {Token}");
+
+            var restResponse = await RestClient.GetAsync(request);
+
+            if (restResponse.Content != ModVersion) ShowNewVersion(restResponse.Content);
+            return true;
+        }
+
+        private void ShowNewVersion(string version)
+        {
+            UpdateModButton.Enabled = true;
+            LastVersionLabel.Text += version;
         }
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
