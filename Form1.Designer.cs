@@ -37,8 +37,8 @@
             VersionAppLabel = new ToolStripStatusLabel();
             toolStripProgressBar1 = new ToolStripProgressBar();
             groupBox1 = new GroupBox();
-            UpdateModButton = new Button();
             LastVersionLabel = new Label();
+            UpdateModButton = new Button();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -116,25 +116,26 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Info";
             // 
-            // UpdateModButton
-            // 
-            UpdateModButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            UpdateModButton.Enabled = false;
-            UpdateModButton.Location = new Point(141, 140);
-            UpdateModButton.Name = "UpdateModButton";
-            UpdateModButton.Size = new Size(75, 23);
-            UpdateModButton.TabIndex = 4;
-            UpdateModButton.Text = "Update";
-            UpdateModButton.UseVisualStyleBackColor = true;
-            // 
             // LastVersionLabel
             // 
             LastVersionLabel.AutoSize = true;
             LastVersionLabel.Location = new Point(6, 40);
             LastVersionLabel.Name = "LastVersionLabel";
-            LastVersionLabel.Size = new Size(75, 15);
+            LastVersionLabel.Size = new Size(126, 15);
             LastVersionLabel.TabIndex = 1;
-            LastVersionLabel.Text = "Last Version: ";
+            LastVersionLabel.Text = "Last Update Available: ";
+            // 
+            // UpdateModButton
+            // 
+            UpdateModButton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            UpdateModButton.Enabled = false;
+            UpdateModButton.Location = new Point(114, 140);
+            UpdateModButton.Name = "UpdateModButton";
+            UpdateModButton.Size = new Size(129, 23);
+            UpdateModButton.TabIndex = 4;
+            UpdateModButton.Text = "Update";
+            UpdateModButton.UseVisualStyleBackColor = true;
+            UpdateModButton.Click += UpdateModButton_Click;
             // 
             // Form1
             // 

@@ -15,12 +15,14 @@ namespace Snowrunner_Parcher
             new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" } };
         private Config cf = new(defaultConfig: DefaultConfig);
         private string ModVersion;
+        private Patcher patcher;
 
         public Form1()
         {
             InitializeComponent();
             IniForm();
             CheckConfig();
+            LoadPatcher();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -38,7 +40,10 @@ namespace Snowrunner_Parcher
 
             changeModPathToolStripMenuItem.ToolTipText = cf.ConfigData["Game"]["ModsPath"];
         }
-
+        private void LoadPatcher()
+        {
+            patcher = new(cf.ConfigData["Game"]["ModsPath"], Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\Snowrunner-Parcher\\Backups");
+        }
         private void IniConfig()
         {
             if (!ChangeModPath())
@@ -89,11 +94,21 @@ namespace Snowrunner_Parcher
         {
             UpdateModButton.Enabled = true;
             LastVersionLabel.Text += version;
+            UpdateModButton.Text += " To " + version;
         }
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cf.OpenConfig();
+        }
+
+        private async void UpdateModButton_Click(object sender, EventArgs e)
+        {
+            string modDownload = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/initial.pak";
+            patcher.CreateBackup();
+            await patcher.PatchMod(modDownload,Token);
+            UpdateModButton.Enabled = false;
+            UpdateModButton.Text = "Patch Applied!";
         }
     }
 }
