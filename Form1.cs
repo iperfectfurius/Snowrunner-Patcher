@@ -91,7 +91,7 @@ namespace Snowrunner_Parcher
             var restResponse = await RestClient.GetAsync(request);
             Version = restResponse.Content;
 
-            if (Version != ModVersion) ShowNewVersion(restResponse.Content);
+            if (Version != ModVersion || !File.Exists(cf.ConfigData["Game"]["ModsPath"])) ShowNewVersion(restResponse.Content);
             else ShowSameVersion();
 
             return true;
@@ -104,7 +104,7 @@ namespace Snowrunner_Parcher
         }
         private void ShowSameVersion()
         {
-            UpdateModButton.Text += "Nothing to update";
+            UpdateModButton.Text = "Nothing to update";
         }
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
