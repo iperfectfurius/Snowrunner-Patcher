@@ -2,6 +2,9 @@ using EasyConfig;
 using IniParser.Model.Formatting;
 using Microsoft.VisualBasic;
 using RestSharp;
+using System;
+using System.Diagnostics;
+using System.Net.Security;
 using System.Reflection;
 
 namespace Snowrunner_Parcher
@@ -16,7 +19,9 @@ namespace Snowrunner_Parcher
         private Config cf = new(defaultConfig: DefaultConfig);
         private string ModVersion;
         private Patcher patcher;
-
+        private string Version;
+        private const string MOD_VERSION = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/Version.txt";
+        private const string MOD_DOWNLOAD = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/initial.pak";
         public Form1()
         {
             InitializeComponent();
@@ -42,17 +47,16 @@ namespace Snowrunner_Parcher
         }
         private void LoadPatcher()
         {
-            patcher = new(cf.ConfigData["Game"]["ModsPath"], Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\Snowrunner-Parcher\\Backups");
+            patcher = new(cf.ConfigData["Game"]["ModsPath"], cf.DirectoryConfig + "\\Backups");
         }
         private void IniConfig()
         {
             if (!ChangeModPath())
             {
-                MessageBox.Show("In order to apply the patch, we need to configure the destination path for the pack mods folder.", "Atention", MessageBoxButtons.OK);
+                MessageBox.Show("In order to apply the patch, we need to configure the destination path for the pack mods folder.", "Attention", MessageBoxButtons.OK);
                 Environment.Exit(1);
             }
             IsIniConfigLoaded = true;
-
         }
 
         private bool ChangeModPath()
@@ -80,23 +84,28 @@ namespace Snowrunner_Parcher
 
         private async Task<bool> CheckModVersion()
         {
-            RestClient RestClient = new(@"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/Version.txt");
+            RestClient RestClient = new(MOD_VERSION);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {Token}");
 
             var restResponse = await RestClient.GetAsync(request);
+            Version = restResponse.Content;
 
-            if (restResponse.Content != ModVersion) ShowNewVersion(restResponse.Content);
+            if (Version != ModVersion) ShowNewVersion(restResponse.Content);
+            else ShowSameVersion();
+
             return true;
         }
-
         private void ShowNewVersion(string version)
         {
             UpdateModButton.Enabled = true;
             LastVersionLabel.Text += version;
             UpdateModButton.Text += " To " + version;
         }
-
+        private void ShowSameVersion()
+        {
+            UpdateModButton.Text += "Nothing to update";
+        }
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cf.OpenConfig();
@@ -104,11 +113,33 @@ namespace Snowrunner_Parcher
 
         private async void UpdateModButton_Click(object sender, EventArgs e)
         {
-            string modDownload = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/initial.pak";
             patcher.CreateBackup();
-            await patcher.PatchMod(modDownload,Token);
+            if (await patcher.PatchMod(MOD_DOWNLOAD, Token)) UpdateFormPatched();
+        }
+        private void UpdateFormPatched()
+        {
             UpdateModButton.Enabled = false;
             UpdateModButton.Text = "Patch Applied!";
+            ProgressBar.Value = 100;
+            cf.ConfigData["Game"]["ModVersion"] = Version;
+        }
+
+        private void changeModPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeModPath();
+        }
+
+        private void openModDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Process.Start(new ProcessStartInfo(fullPathConfig)
+            //{
+            //    UseShellExecute = true
+            //});
+        }
+
+        private void advancToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

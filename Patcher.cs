@@ -17,6 +17,7 @@ namespace Snowrunner_Parcher
             Simple,
             Advanced
         }
+        private const string TEMP_NAME = "initial.pak";
         private readonly string ModPath;
         private readonly string BackupPath;
 
@@ -34,7 +35,6 @@ namespace Snowrunner_Parcher
             if (!Directory.Exists(ModPath)) CreateBackupDirectory();
             CreateBackupPakMod();
 
-
             return true;
         }
         private bool CreateBackupDirectory()
@@ -44,18 +44,18 @@ namespace Snowrunner_Parcher
         }
         private void CreateBackupPakMod()
         {
-
             string name = string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.bck");
         }
         public async Task<bool> PatchMod(string modDownload,string token = "",Method method = Method.Simple)
         {
-            string tempDownloadedFile = BackupPath + "\\initial.pak";
+            //if (method == Method.Simple)
+            string tempDownloadedFile = BackupPath + $"\\{TEMP_NAME}";
             RestClient RestClient = new(modDownload);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {token}");
-            var restResponse = await RestClient.DownloadDataAsync(request);
 
+            var restResponse = await RestClient.DownloadDataAsync(request);
             
             File.WriteAllBytes(tempDownloadedFile, restResponse);
             

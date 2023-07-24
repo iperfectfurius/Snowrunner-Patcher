@@ -33,12 +33,14 @@
             configToolStripMenuItem = new ToolStripMenuItem();
             changeModPathToolStripMenuItem = new ToolStripMenuItem();
             openConfigFileToolStripMenuItem = new ToolStripMenuItem();
+            openModDirectoryToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             VersionAppLabel = new ToolStripStatusLabel();
-            toolStripProgressBar1 = new ToolStripProgressBar();
+            ProgressBar = new ToolStripProgressBar();
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
+            advancToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -64,7 +66,7 @@
             // 
             // configToolStripMenuItem
             // 
-            configToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeModPathToolStripMenuItem, openConfigFileToolStripMenuItem });
+            configToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeModPathToolStripMenuItem, openConfigFileToolStripMenuItem, openModDirectoryToolStripMenuItem, advancToolStripMenuItem });
             configToolStripMenuItem.Name = "configToolStripMenuItem";
             configToolStripMenuItem.Size = new Size(55, 20);
             configToolStripMenuItem.Text = "Config";
@@ -72,19 +74,27 @@
             // changeModPathToolStripMenuItem
             // 
             changeModPathToolStripMenuItem.Name = "changeModPathToolStripMenuItem";
-            changeModPathToolStripMenuItem.Size = new Size(170, 22);
+            changeModPathToolStripMenuItem.Size = new Size(182, 22);
             changeModPathToolStripMenuItem.Text = "Change Mod Path";
+            changeModPathToolStripMenuItem.Click += changeModPathToolStripMenuItem_Click;
             // 
             // openConfigFileToolStripMenuItem
             // 
             openConfigFileToolStripMenuItem.Name = "openConfigFileToolStripMenuItem";
-            openConfigFileToolStripMenuItem.Size = new Size(170, 22);
+            openConfigFileToolStripMenuItem.Size = new Size(182, 22);
             openConfigFileToolStripMenuItem.Text = "Open Config File";
             openConfigFileToolStripMenuItem.Click += openConfigFileToolStripMenuItem_Click;
             // 
+            // openModDirectoryToolStripMenuItem
+            // 
+            openModDirectoryToolStripMenuItem.Name = "openModDirectoryToolStripMenuItem";
+            openModDirectoryToolStripMenuItem.Size = new Size(182, 22);
+            openModDirectoryToolStripMenuItem.Text = "Open Mod Directory";
+            openModDirectoryToolStripMenuItem.Click += openModDirectoryToolStripMenuItem_Click;
+            // 
             // statusStrip1
             // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { VersionAppLabel, toolStripProgressBar1 });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { VersionAppLabel, ProgressBar });
             statusStrip1.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusStrip1.Location = new Point(0, 166);
             statusStrip1.Name = "statusStrip1";
@@ -97,13 +107,13 @@
             VersionAppLabel.Name = "VersionAppLabel";
             VersionAppLabel.Size = new Size(0, 17);
             // 
-            // toolStripProgressBar1
+            // ProgressBar
             // 
-            toolStripProgressBar1.Alignment = ToolStripItemAlignment.Right;
-            toolStripProgressBar1.Name = "toolStripProgressBar1";
-            toolStripProgressBar1.RightToLeft = RightToLeft.No;
-            toolStripProgressBar1.Size = new Size(100, 16);
-            toolStripProgressBar1.Step = 250;
+            ProgressBar.Alignment = ToolStripItemAlignment.Right;
+            ProgressBar.Name = "ProgressBar";
+            ProgressBar.RightToLeft = RightToLeft.No;
+            ProgressBar.Size = new Size(100, 16);
+            ProgressBar.Step = 1000;
             // 
             // groupBox1
             // 
@@ -137,6 +147,13 @@
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
             // 
+            // advancToolStripMenuItem
+            // 
+            advancToolStripMenuItem.Name = "advancToolStripMenuItem";
+            advancToolStripMenuItem.Size = new Size(182, 22);
+            advancToolStripMenuItem.Text = "Advanced Patching";
+            advancToolStripMenuItem.Click += advancToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -148,7 +165,7 @@
             Controls.Add(groupBox1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
-            Text = "Form1";
+            Text = "Snowrunner Patcher";
             Load += Form1_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
@@ -169,9 +186,11 @@
         private ToolStripMenuItem openConfigFileToolStripMenuItem;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel VersionAppLabel;
-        private ToolStripProgressBar toolStripProgressBar1;
+        private ToolStripProgressBar ProgressBar;
         private GroupBox groupBox1;
         private Button UpdateModButton;
         private Label LastVersionLabel;
+        private ToolStripMenuItem openModDirectoryToolStripMenuItem;
+        private ToolStripMenuItem advancToolStripMenuItem;
     }
 }
