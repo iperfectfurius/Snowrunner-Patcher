@@ -34,13 +34,19 @@
             changeModPathToolStripMenuItem = new ToolStripMenuItem();
             openConfigFileToolStripMenuItem = new ToolStripMenuItem();
             openModDirectoryToolStripMenuItem = new ToolStripMenuItem();
+            modPakToolStripMenuItem = new ToolStripMenuItem();
+            advancedPatchingToolStripMenuItem = new ToolStripMenuItem();
+            deleteModPakToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             VersionAppLabel = new ToolStripStatusLabel();
             ProgressBar = new ToolStripProgressBar();
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
-            advancToolStripMenuItem = new ToolStripMenuItem();
+            openBackupsToolStripMenuItem = new ToolStripMenuItem();
+            openToolStripMenuItem = new ToolStripMenuItem();
+            deleteAllToolStripMenuItem = new ToolStripMenuItem();
+            replaceBackupToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -57,7 +63,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { configToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { configToolStripMenuItem, modPakToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(359, 24);
@@ -66,7 +72,7 @@
             // 
             // configToolStripMenuItem
             // 
-            configToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeModPathToolStripMenuItem, openConfigFileToolStripMenuItem, openModDirectoryToolStripMenuItem, advancToolStripMenuItem });
+            configToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { changeModPathToolStripMenuItem, openConfigFileToolStripMenuItem, openModDirectoryToolStripMenuItem });
             configToolStripMenuItem.Name = "configToolStripMenuItem";
             configToolStripMenuItem.Size = new Size(55, 20);
             configToolStripMenuItem.Text = "Config";
@@ -91,6 +97,25 @@
             openModDirectoryToolStripMenuItem.Size = new Size(182, 22);
             openModDirectoryToolStripMenuItem.Text = "Open Mod Directory";
             openModDirectoryToolStripMenuItem.Click += openModDirectoryToolStripMenuItem_Click;
+            // 
+            // modPakToolStripMenuItem
+            // 
+            modPakToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { advancedPatchingToolStripMenuItem, openBackupsToolStripMenuItem, deleteModPakToolStripMenuItem });
+            modPakToolStripMenuItem.Name = "modPakToolStripMenuItem";
+            modPakToolStripMenuItem.Size = new Size(63, 20);
+            modPakToolStripMenuItem.Text = "ModPak";
+            // 
+            // advancedPatchingToolStripMenuItem
+            // 
+            advancedPatchingToolStripMenuItem.Name = "advancedPatchingToolStripMenuItem";
+            advancedPatchingToolStripMenuItem.Size = new Size(177, 22);
+            advancedPatchingToolStripMenuItem.Text = "Advanced Patching";
+            // 
+            // deleteModPakToolStripMenuItem
+            // 
+            deleteModPakToolStripMenuItem.Name = "deleteModPakToolStripMenuItem";
+            deleteModPakToolStripMenuItem.Size = new Size(177, 22);
+            deleteModPakToolStripMenuItem.Text = "Delete ModPak";
             // 
             // statusStrip1
             // 
@@ -147,12 +172,30 @@
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
             // 
-            // advancToolStripMenuItem
+            // openBackupsToolStripMenuItem
             // 
-            advancToolStripMenuItem.Name = "advancToolStripMenuItem";
-            advancToolStripMenuItem.Size = new Size(182, 22);
-            advancToolStripMenuItem.Text = "Advanced Patching";
-            advancToolStripMenuItem.Click += advancToolStripMenuItem_Click;
+            openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
+            openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
+            openBackupsToolStripMenuItem.Size = new Size(177, 22);
+            openBackupsToolStripMenuItem.Text = "Backups";
+            // 
+            // openToolStripMenuItem
+            // 
+            openToolStripMenuItem.Name = "openToolStripMenuItem";
+            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Text = "Open";
+            // 
+            // deleteAllToolStripMenuItem
+            // 
+            deleteAllToolStripMenuItem.Name = "deleteAllToolStripMenuItem";
+            deleteAllToolStripMenuItem.Size = new Size(180, 22);
+            deleteAllToolStripMenuItem.Text = "Delete All";
+            // 
+            // replaceBackupToolStripMenuItem
+            // 
+            replaceBackupToolStripMenuItem.Name = "replaceBackupToolStripMenuItem";
+            replaceBackupToolStripMenuItem.Size = new Size(180, 22);
+            replaceBackupToolStripMenuItem.Text = "Replace Backup";
             // 
             // Form1
             // 
@@ -191,6 +234,12 @@
         private Button UpdateModButton;
         private Label LastVersionLabel;
         private ToolStripMenuItem openModDirectoryToolStripMenuItem;
-        private ToolStripMenuItem advancToolStripMenuItem;
+        private ToolStripMenuItem modPakToolStripMenuItem;
+        private ToolStripMenuItem advancedPatchingToolStripMenuItem;
+        private ToolStripMenuItem deleteModPakToolStripMenuItem;
+        private ToolStripMenuItem openBackupsToolStripMenuItem;
+        private ToolStripMenuItem openToolStripMenuItem;
+        private ToolStripMenuItem deleteAllToolStripMenuItem;
+        private ToolStripMenuItem replaceBackupToolStripMenuItem;
     }
 }

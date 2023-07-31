@@ -1,11 +1,12 @@
 using EasyConfig;
 using IniParser.Model.Formatting;
-using Microsoft.VisualBasic;
 using RestSharp;
 using System;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
+using static Snowrunner_Parcher.Resources.ResourcesApp;
+using System.Xml;
 
 namespace Snowrunner_Parcher
 {
@@ -20,8 +21,7 @@ namespace Snowrunner_Parcher
         private string ModVersion;
         private Patcher patcher;
         private string Version;
-        private const string MOD_VERSION = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/Version.txt";
-        private const string MOD_DOWNLOAD = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/initial.pak";
+
         public Form1()
         {
             InitializeComponent();
@@ -78,13 +78,33 @@ namespace Snowrunner_Parcher
         }
         private async void CheckForUpdates()
         {
+           if (await CheckAppVersion()) OpenDownloadPage();
             Token = await GetToken.GetTokenFromRequest();
             await CheckModVersion();
         }
 
+        private async Task<bool> CheckAppVersion()
+        {
+            const string TempToken = "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";//Development key this has no sense in the future
+            RestClient RestClient = new(APP_VERSION_URL);
+            RestRequest request = new RestRequest();
+            request.AddHeader("Authorization", $"token {TempToken}");
+
+            var restResponse = await RestClient.GetAsync(request);
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(restResponse.Content);
+
+
+            return true;
+        }
+        private void OpenDownloadPage()
+        {
+            
+        }
         private async Task<bool> CheckModVersion()
         {
-            RestClient RestClient = new(MOD_VERSION);
+            RestClient RestClient = new(MOD_VERSION_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {Token}");
 
@@ -114,7 +134,7 @@ namespace Snowrunner_Parcher
         private async void UpdateModButton_Click(object sender, EventArgs e)
         {
             patcher.CreateBackup();
-            if (await patcher.PatchMod(MOD_DOWNLOAD, Token)) UpdateFormPatched();
+            if (await patcher.PatchMod(MOD_DOWNLOAD_URL, Token)) UpdateFormPatched();
         }
         private void UpdateFormPatched()
         {
@@ -135,11 +155,6 @@ namespace Snowrunner_Parcher
             //{
             //    UseShellExecute = true
             //});
-        }
-
-        private void advancToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
