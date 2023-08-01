@@ -78,7 +78,7 @@ namespace Snowrunner_Patcher
         }
         private async void CheckForUpdates()
         {
-           if (await CheckAppVersion()) OpenDownloadPage();
+            if (await CheckAppVersion()) OpenDownloadPage();
             Token = await GetToken.GetTokenFromRequest();
             await CheckModVersion();
         }
@@ -93,15 +93,34 @@ namespace Snowrunner_Patcher
             var restResponse = await RestClient.GetAsync(request);
 
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(restResponse.Content);
 
-            if (doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText != APP_VERSION) OpenDownloadPage();
+            try
+            {
+                doc.LoadXml(restResponse.Content);
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusInfo.Text = "Can't Check app versions";
+                return false;
+            }
+            bool SameVersion = doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText == APP_VERSION;
+
+            if (!SameVersion) OpenDownloadPage();
 
             return true;
         }
-        private void OpenDownloadPage()
+        private async void OpenDownloadPage()
         {
-           
+            if (MessageBox.Show("New version release. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) != DialogResult.OK) return;
+
+            const string TempToken = "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";//Development key this has no sense in the future
+
+            RestClient RestClient = new(APP_REALEASED_VERSIONS_URL);
+            RestRequest request = new RestRequest();
+            request.AddHeader("Authorization", $"token {TempToken}");
+
+            var restResponse = await RestClient.GetAsync(request);
+
         }
         private async Task<bool> CheckModVersion()
         {
