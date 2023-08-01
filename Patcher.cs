@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Snowrunner_Parcher
+namespace Snowrunner_Patcher
 {
     internal class Patcher
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Snowrunner_Parcher.Resources
+namespace Snowrunner_Patcher.Resources
 {
     internal class ResourcesApp
     {

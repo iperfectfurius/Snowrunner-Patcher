@@ -1,4 +1,4 @@
-namespace Snowrunner_Parcher
+namespace Snowrunner_Patcher
 {
     internal static class Program
     {

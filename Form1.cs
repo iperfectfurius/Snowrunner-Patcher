@@ -5,10 +5,10 @@ using System;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
-using static Snowrunner_Parcher.Resources.ResourcesApp;
+using static Snowrunner_Patcher.Resources.ResourcesApp;
 using System.Xml;
 
-namespace Snowrunner_Parcher
+namespace Snowrunner_Patcher
 {
     public partial class Form1 : Form
     {
