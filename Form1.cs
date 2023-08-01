@@ -95,12 +95,13 @@ namespace Snowrunner_Parcher
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(restResponse.Content);
 
+            if (doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText != APP_VERSION) OpenDownloadPage();
 
             return true;
         }
         private void OpenDownloadPage()
         {
-            
+           
         }
         private async Task<bool> CheckModVersion()
         {
