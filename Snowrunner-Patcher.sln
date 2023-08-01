@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33717.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snowrunner-Parcher", "Snowrunner-Parcher.csproj", "{5DE7E96D-1875-4719-A864-1918EBD99B32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snowrunner-Patcher", "Snowrunner-Patcher.csproj", "{5DE7E96D-1875-4719-A864-1918EBD99B32}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Snowrunner-Patcher-Setup", "..\Snowrunner-Patcher-Setup\Snowrunner-Patcher-Setup.vdproj", "{1FFF1003-78BE-46F5-A39B-F64B036BD05C}"
 EndProject
