@@ -7,6 +7,8 @@ using System.Net.Security;
 using System.Reflection;
 using static Snowrunner_Patcher.Resources.ResourcesApp;
 using System.Xml;
+using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace Snowrunner_Patcher
 {
@@ -120,6 +122,10 @@ namespace Snowrunner_Patcher
             request.AddHeader("Authorization", $"token {TempToken}");
 
             var restResponse = await RestClient.GetAsync(request);
+            JObject releases = JObject.Parse(restResponse.Content);
+
+            JObject firstResult = (JObject)releases[1];
+
 
         }
         private async Task<bool> CheckModVersion()
