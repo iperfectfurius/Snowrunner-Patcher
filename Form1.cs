@@ -113,8 +113,9 @@ namespace Snowrunner_Patcher
         }
         private async void OpenDownloadPage()
         {
-            if (MessageBox.Show("New version release. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) != DialogResult.OK) return;
+            if (MessageBox.Show("New version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
+            //TODO Remove
             const string TempToken = "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";//Development key this has no sense in the future
 
             RestClient RestClient = new(APP_REALEASED_VERSIONS_URL);
@@ -122,10 +123,14 @@ namespace Snowrunner_Patcher
             request.AddHeader("Authorization", $"token {TempToken}");
 
             var restResponse = await RestClient.GetAsync(request);
-            JObject releases = JObject.Parse(restResponse.Content);
 
-            JObject firstResult = (JObject)releases[1];
+            JObject lastRelease = (JObject)JArray.Parse(restResponse.Content)[0];
 
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = (string)lastRelease["html_url"],
+                UseShellExecute = true
+            });
 
         }
         private async Task<bool> CheckModVersion()
