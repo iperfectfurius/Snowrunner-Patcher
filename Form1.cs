@@ -24,6 +24,8 @@ namespace Snowrunner_Patcher
         private Patcher patcher;
         private string ModVersionReleased;
 
+        private string ModPakPath => string.Join('\\',cf.ConfigData["Game"]["ModsPath"].Split('\\')[..^1]);
+        private string ModPakName => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[^1]);
         public Form1()
         {
             InitializeComponent();
@@ -125,7 +127,7 @@ namespace Snowrunner_Patcher
 
         private void ShowNewAPPVersion()
         {
-            toolStripStatusInfo.Text = "New Version Released";
+            toolStripStatusInfo.Text = "New APP Version Released";
             toolStripStatusInfo.ForeColor = Color.Green;
         }
 
@@ -160,23 +162,23 @@ namespace Snowrunner_Patcher
             var restResponse = await RestClient.GetAsync(request);
             ModVersionReleased = restResponse.Content;
 
-            if (ModVersionReleased != ModVersionInstalled || !File.Exists(cf.ConfigData["Game"]["ModsPath"])) ShowNewModVersion(restResponse.Content);
+            if (ModVersionReleased != ModVersionInstalled || !File.Exists(ModPakPath)) ShowNewModVersion(restResponse.Content);
 
-            ShowVersionReleased();
+            ShowModVersionReleased();
             return true;
         }
         private void ShowNewModVersion(string version)
         {
             UpdateModButton.Enabled = true;
-            UpdateModButton.Text += " To " + version;
+            UpdateModButton.Text = "Update to " + version;
 
             LastVersionLabel.ForeColor = Color.Green;
         }
-        private void ShowVersionReleased()
+        private void ShowModVersionReleased()
         {
-            UpdateModButton.Text = "Up to Date";
-            LastVersionLabel.Text += $" {ModVersionReleased}"; 
+            LastVersionLabel.Text += $" {ModVersionReleased}";
         }
+
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cf.OpenConfig();
@@ -185,7 +187,7 @@ namespace Snowrunner_Patcher
         private async void UpdateModButton_Click(object sender, EventArgs e)
         {
             patcher.CreateBackup();
-            if (await patcher.PatchMod(MOD_DOWNLOAD_URL, Token)) UpdateFormPatched();
+            if (await patcher.PatchMod(MOD_DOWNLOAD_URL, ProgressBar, Token)) UpdateFormPatched();
         }
         private void UpdateFormPatched()
         {
@@ -202,10 +204,10 @@ namespace Snowrunner_Patcher
 
         private void openModDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Process.Start(new ProcessStartInfo(fullPathConfig)
-            //{
-            //    UseShellExecute = true
-            //});
+            Process.Start(new ProcessStartInfo(ModPakPath,"/ select, \"" + ModPakName + "\"")
+            {
+                UseShellExecute = true
+            });
         }
     }
 }

@@ -198,7 +198,7 @@
             UpdateModButton.Name = "UpdateModButton";
             UpdateModButton.Size = new Size(129, 23);
             UpdateModButton.TabIndex = 4;
-            UpdateModButton.Text = "Update";
+            UpdateModButton.Text = "Up do Date";
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
             // 

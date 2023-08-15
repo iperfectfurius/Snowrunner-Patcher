@@ -47,9 +47,10 @@ namespace Snowrunner_Patcher
             string name = string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.bck");
         }
-        public async Task<bool> PatchMod(string modDownload,string token = "",Method method = Method.Simple)
+        public async Task<bool> PatchMod(string modDownload,ToolStripProgressBar progress, string token = "",Method method = Method.Simple)
         {
             //if (method == Method.Simple)
+            progress.Value = 1;
             string tempDownloadedFile = BackupPath + $"\\{TEMP_NAME}";
             RestClient RestClient = new(modDownload);
             RestRequest request = new RestRequest();
