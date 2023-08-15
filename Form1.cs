@@ -20,9 +20,9 @@ namespace Snowrunner_Patcher
         private static readonly Dictionary<(string, string), string> DefaultConfig =
             new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" } };
         private Config cf = new(defaultConfig: DefaultConfig);
-        private string ModVersion;
+        private string ModVersionInstalled;
         private Patcher patcher;
-        private string Version;
+        private string ModVersionReleased;
 
         public Form1()
         {
@@ -38,8 +38,8 @@ namespace Snowrunner_Patcher
         private void IniForm()
         {
             VersionAppLabel.Text = APP_VERSION;
-            ModVersion = cf.ConfigData["Game"]["ModVersion"];
-            ModVersionLabel.Text += ModVersion;
+            ModVersionInstalled = cf.ConfigData["Game"]["ModVersion"];
+            ModVersionLabel.Text += ModVersionInstalled;
         }
         private void CheckConfig()
         {
@@ -80,7 +80,7 @@ namespace Snowrunner_Patcher
         }
         private async void CheckForUpdates()
         {
-            if (await CheckAppVersion()) OpenDownloadPage();
+            await CheckAppVersion();
             Token = await GetToken.GetTokenFromRequest();
             await CheckModVersion();
         }
@@ -88,6 +88,8 @@ namespace Snowrunner_Patcher
         private async Task<bool> CheckAppVersion()
         {
             const string TempToken = "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";//Development key this has no sense in the future
+            string versionReleased = string.Empty;
+
             RestClient RestClient = new(APP_VERSION_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {TempToken}");
@@ -103,17 +105,33 @@ namespace Snowrunner_Patcher
             catch (Exception ex)
             {
                 toolStripStatusInfo.Text = "Can't Check app versions";
+                toolStripStatusInfo.ForeColor = Color.Red;
                 return false;
             }
-            bool SameVersion = doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText == APP_VERSION;
 
-            if (!SameVersion) OpenDownloadPage();
+            versionReleased = doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText;
+
+            bool SameVersion = versionReleased == APP_VERSION;
+
+            if (!SameVersion)
+            {
+                ShowNewAPPVersion();
+
+                OpenDownloadPage();
+            }
 
             return true;
         }
+
+        private void ShowNewAPPVersion()
+        {
+            toolStripStatusInfo.Text = "New Version Released";
+            toolStripStatusInfo.ForeColor = Color.Green;
+        }
+
         private async void OpenDownloadPage()
         {
-            if (MessageBox.Show("New version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            if (MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
 
             //TODO Remove
             const string TempToken = "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";//Development key this has no sense in the future
@@ -140,22 +158,24 @@ namespace Snowrunner_Patcher
             request.AddHeader("Authorization", $"token {Token}");
 
             var restResponse = await RestClient.GetAsync(request);
-            Version = restResponse.Content;
+            ModVersionReleased = restResponse.Content;
 
-            if (Version != ModVersion || !File.Exists(cf.ConfigData["Game"]["ModsPath"])) ShowNewVersion(restResponse.Content);
-            else ShowSameVersion();
+            if (ModVersionReleased != ModVersionInstalled || !File.Exists(cf.ConfigData["Game"]["ModsPath"])) ShowNewModVersion(restResponse.Content);
 
+            ShowVersionReleased();
             return true;
         }
-        private void ShowNewVersion(string version)
+        private void ShowNewModVersion(string version)
         {
             UpdateModButton.Enabled = true;
-            LastVersionLabel.Text += version;
             UpdateModButton.Text += " To " + version;
+
+            LastVersionLabel.ForeColor = Color.Green;
         }
-        private void ShowSameVersion()
+        private void ShowVersionReleased()
         {
-            UpdateModButton.Text = "Nothing to update";
+            UpdateModButton.Text = "Up to Date";
+            LastVersionLabel.Text += $" {ModVersionReleased}"; 
         }
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -172,7 +192,7 @@ namespace Snowrunner_Patcher
             UpdateModButton.Enabled = false;
             UpdateModButton.Text = "Patch Applied!";
             ProgressBar.Value = 100;
-            cf.ConfigData["Game"]["ModVersion"] = Version;
+            cf.ConfigData["Game"]["ModVersion"] = ModVersionReleased;
         }
 
         private void changeModPathToolStripMenuItem_Click(object sender, EventArgs e)

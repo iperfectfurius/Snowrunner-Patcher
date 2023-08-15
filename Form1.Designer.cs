@@ -186,9 +186,9 @@
             LastVersionLabel.AutoSize = true;
             LastVersionLabel.Location = new Point(6, 40);
             LastVersionLabel.Name = "LastVersionLabel";
-            LastVersionLabel.Size = new Size(126, 15);
+            LastVersionLabel.Size = new Size(127, 15);
             LastVersionLabel.TabIndex = 1;
-            LastVersionLabel.Text = "Last Update Available: ";
+            LastVersionLabel.Text = "Last Release Available: ";
             // 
             // UpdateModButton
             // 
