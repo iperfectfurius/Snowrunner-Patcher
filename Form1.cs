@@ -24,8 +24,9 @@ namespace Snowrunner_Patcher
         private Patcher patcher;
         private string ModVersionReleased;
 
-        private string ModPakPath => string.Join('\\',cf.ConfigData["Game"]["ModsPath"].Split('\\')[..^1]);
+        private string ModPakPath => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[..^1]);
         private string ModPakName => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[^1]);
+        private string BackupFolder => cf.DirectoryConfig + "\\Backups";
         public Form1()
         {
             InitializeComponent();
@@ -48,10 +49,11 @@ namespace Snowrunner_Patcher
             if (cf.ConfigData["Game"]["ModsPath"] == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
 
             changeModPathToolStripMenuItem.ToolTipText = cf.ConfigData["Game"]["ModsPath"];
+
         }
         private void LoadPatcher()
         {
-            patcher = new(cf.ConfigData["Game"]["ModsPath"], cf.DirectoryConfig + "\\Backups");
+            patcher = new(cf.ConfigData["Game"]["ModsPath"], BackupFolder);
         }
         private void IniConfig()
         {
@@ -128,12 +130,13 @@ namespace Snowrunner_Patcher
         private void ShowNewAPPVersion()
         {
             toolStripStatusInfo.Text = "New APP Version Released";
-            toolStripStatusInfo.ForeColor = Color.Green;
+            toolStripStatusInfo.IsLink = true;
+
         }
 
         private async void OpenDownloadPage()
         {
-            if (MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+            bool result = MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes;
 
             //TODO Remove
             const string TempToken = "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";//Development key this has no sense in the future
@@ -146,13 +149,23 @@ namespace Snowrunner_Patcher
 
             JObject lastRelease = (JObject)JArray.Parse(restResponse.Content)[0];
 
+            if (result)
+            {
+                OpenNewRelease((string)lastRelease["html_url"]);
+            }
+            //toolStripStatusInfo.Tag = ;
+            toolStripStatusInfo.Click += (e, ar) => OpenNewRelease((string)lastRelease["html_url"]);
+        }
+
+        private void OpenNewRelease(string wepPage)
+        {
             Process.Start(new ProcessStartInfo
             {
-                FileName = (string)lastRelease["html_url"],
+                FileName = wepPage,
                 UseShellExecute = true
             });
-
         }
+
         private async Task<bool> CheckModVersion()
         {
             RestClient RestClient = new(MOD_VERSION_URL);
@@ -208,6 +221,15 @@ namespace Snowrunner_Patcher
             {
                 UseShellExecute = true,
                 Arguments = "/select, \"" + cf.ConfigData["Game"]["ModsPath"] + "\""
+            });
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("explorer.exe")
+            {
+                UseShellExecute = true,
+                Arguments = BackupFolder
             });
         }
     }

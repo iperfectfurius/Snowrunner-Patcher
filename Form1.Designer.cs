@@ -122,19 +122,20 @@
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(157, 22);
-            openToolStripMenuItem.Text = "Open";
+            openToolStripMenuItem.Size = new Size(186, 22);
+            openToolStripMenuItem.Text = "Open Backups Folder";
+            openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // deleteAllToolStripMenuItem
             // 
             deleteAllToolStripMenuItem.Name = "deleteAllToolStripMenuItem";
-            deleteAllToolStripMenuItem.Size = new Size(157, 22);
+            deleteAllToolStripMenuItem.Size = new Size(186, 22);
             deleteAllToolStripMenuItem.Text = "Delete All";
             // 
             // replaceBackupToolStripMenuItem
             // 
             replaceBackupToolStripMenuItem.Name = "replaceBackupToolStripMenuItem";
-            replaceBackupToolStripMenuItem.Size = new Size(157, 22);
+            replaceBackupToolStripMenuItem.Size = new Size(186, 22);
             replaceBackupToolStripMenuItem.Text = "Replace Backup";
             // 
             // deleteModPakToolStripMenuItem
@@ -213,6 +214,7 @@
             Controls.Add(groupBox1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Snowrunner Patcher";
             Load += Form1_Load;
             menuStrip1.ResumeLayout(false);
