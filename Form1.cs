@@ -204,9 +204,10 @@ namespace Snowrunner_Patcher
 
         private void openModDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(new ProcessStartInfo(ModPakPath,"/ select, \"" + ModPakName + "\"")
+            Process.Start(new ProcessStartInfo("explorer.exe")
             {
-                UseShellExecute = true
+                UseShellExecute = true,
+                Arguments = "/select, \"" + cf.ConfigData["Game"]["ModsPath"] + "\""
             });
         }
     }
