@@ -24,7 +24,8 @@ namespace Snowrunner_Patcher
         private Patcher patcher;
         private string ModVersionReleased;
 
-        private string ModPakPath => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[..^1]);
+        private string ModPakPathFolder => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[..^1]);
+        private string ModPakPath => cf.ConfigData["Game"]["ModsPath"];
         private string ModPakName => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[^1]);
         private string BackupFolder => cf.DirectoryConfig + "\\Backups";
         public Form1()
@@ -220,7 +221,7 @@ namespace Snowrunner_Patcher
             Process.Start(new ProcessStartInfo("explorer.exe")
             {
                 UseShellExecute = true,
-                Arguments = "/select, \"" + cf.ConfigData["Game"]["ModsPath"] + "\""
+                Arguments = "/select, \"" + ModPakPath + "\""
             });
         }
 
@@ -231,6 +232,14 @@ namespace Snowrunner_Patcher
                 UseShellExecute = true,
                 Arguments = BackupFolder
             });
+        }
+
+        private void replaceBackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //menuStrip1.Hide();
+            if (MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.No) return;
+
+            
         }
     }
 }

@@ -48,6 +48,7 @@
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
+            lastBackupToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             StatusInfo.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -109,14 +110,14 @@
             // advancedPatchingToolStripMenuItem
             // 
             advancedPatchingToolStripMenuItem.Name = "advancedPatchingToolStripMenuItem";
-            advancedPatchingToolStripMenuItem.Size = new Size(177, 22);
+            advancedPatchingToolStripMenuItem.Size = new Size(180, 22);
             advancedPatchingToolStripMenuItem.Text = "Advanced Patching";
             // 
             // openBackupsToolStripMenuItem
             // 
             openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
             openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
-            openBackupsToolStripMenuItem.Size = new Size(177, 22);
+            openBackupsToolStripMenuItem.Size = new Size(180, 22);
             openBackupsToolStripMenuItem.Text = "Backups";
             // 
             // openToolStripMenuItem
@@ -134,14 +135,16 @@
             // 
             // replaceBackupToolStripMenuItem
             // 
+            replaceBackupToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { lastBackupToolStripMenuItem });
             replaceBackupToolStripMenuItem.Name = "replaceBackupToolStripMenuItem";
             replaceBackupToolStripMenuItem.Size = new Size(186, 22);
             replaceBackupToolStripMenuItem.Text = "Replace Backup";
+            replaceBackupToolStripMenuItem.Click += replaceBackupToolStripMenuItem_Click;
             // 
             // deleteModPakToolStripMenuItem
             // 
             deleteModPakToolStripMenuItem.Name = "deleteModPakToolStripMenuItem";
-            deleteModPakToolStripMenuItem.Size = new Size(177, 22);
+            deleteModPakToolStripMenuItem.Size = new Size(180, 22);
             deleteModPakToolStripMenuItem.Text = "Delete ModPak";
             // 
             // StatusInfo
@@ -203,6 +206,12 @@
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
             // 
+            // lastBackupToolStripMenuItem
+            // 
+            lastBackupToolStripMenuItem.Name = "lastBackupToolStripMenuItem";
+            lastBackupToolStripMenuItem.Size = new Size(180, 22);
+            lastBackupToolStripMenuItem.Text = "Last Backup";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -249,5 +258,6 @@
         private ToolStripMenuItem deleteAllToolStripMenuItem;
         private ToolStripMenuItem replaceBackupToolStripMenuItem;
         private ToolStripStatusLabel toolStripStatusInfo;
+        private ToolStripMenuItem lastBackupToolStripMenuItem;
     }
 }
