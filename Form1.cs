@@ -18,7 +18,7 @@ namespace Snowrunner_Patcher
         private bool IsIniConfigLoaded = false;
         private static readonly string APP_VERSION = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         private static readonly Dictionary<(string, string), string> DefaultConfig =
-            new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" } };
+            new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" }, { ("Game", "PatchingMode"), Patcher.Method.Simple.ToString() } };
         private Config cf = new(defaultConfig: DefaultConfig);
         private string ModVersionInstalled;
         private Patcher patcher;
@@ -51,10 +51,17 @@ namespace Snowrunner_Patcher
 
             changeModPathToolStripMenuItem.ToolTipText = cf.ConfigData["Game"]["ModsPath"];
 
+            if (cf.ConfigData["Game"]["PatchingMode"] == null) cf.ConfigData["Game"]["PatchingMode"] = Patcher.Method.Simple.ToString();
+
+            if ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), cf.ConfigData["Game"]["PatchingMode"]) == Patcher.Method.Advanced)
+                advancedPatchingToolStripMenuItem.Checked = true;
+
+
         }
         private void LoadPatcher()
         {
-            patcher = new(cf.ConfigData["Game"]["ModsPath"], BackupFolder);
+            Patcher.Method method = (Patcher.Method)Enum.Parse(typeof(Patcher.Method), cf.ConfigData["Game"]["PatchingMode"]);
+            patcher = new(cf.ConfigData["Game"]["ModsPath"], BackupFolder, method);
         }
         private void IniConfig()
         {
@@ -236,10 +243,19 @@ namespace Snowrunner_Patcher
 
         private void replaceBackupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //menuStrip1.Hide();
-            if (MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.No) return;
 
-            
+        }
+
+        private void lastBackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            if (MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.No) return;
+        }
+
+        private void advancedPatchingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            advancedPatchingToolStripMenuItem.Checked = !advancedPatchingToolStripMenuItem.Checked;
+            //cf.ConfigData["Game"]["PatchingMode"] = ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), cf.ConfigData["Game"]["PatchingMode"])).ToString();
         }
     }
 }

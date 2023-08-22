@@ -20,11 +20,13 @@ namespace Snowrunner_Patcher
         private const string TEMP_NAME = "initial.pak";
         private readonly string ModPath;
         private readonly string BackupPath;
+        public Method PatchingMethod;
 
-        public Patcher(string modPath,string backupFolder)
+        public Patcher(string modPath,string backupFolder, Method patchingMethod = Method.Simple)
         {
             ModPath = modPath;
             BackupPath = backupFolder;
+            PatchingMethod = patchingMethod;
         }
 
         public bool CreateBackup()

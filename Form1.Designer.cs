@@ -40,6 +40,7 @@
             openToolStripMenuItem = new ToolStripMenuItem();
             deleteAllToolStripMenuItem = new ToolStripMenuItem();
             replaceBackupToolStripMenuItem = new ToolStripMenuItem();
+            lastBackupToolStripMenuItem = new ToolStripMenuItem();
             deleteModPakToolStripMenuItem = new ToolStripMenuItem();
             StatusInfo = new StatusStrip();
             VersionAppLabel = new ToolStripStatusLabel();
@@ -48,7 +49,6 @@
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
-            lastBackupToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             StatusInfo.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -112,6 +112,7 @@
             advancedPatchingToolStripMenuItem.Name = "advancedPatchingToolStripMenuItem";
             advancedPatchingToolStripMenuItem.Size = new Size(180, 22);
             advancedPatchingToolStripMenuItem.Text = "Advanced Patching";
+            advancedPatchingToolStripMenuItem.Click += advancedPatchingToolStripMenuItem_Click;
             // 
             // openBackupsToolStripMenuItem
             // 
@@ -140,6 +141,13 @@
             replaceBackupToolStripMenuItem.Size = new Size(186, 22);
             replaceBackupToolStripMenuItem.Text = "Replace Backup";
             replaceBackupToolStripMenuItem.Click += replaceBackupToolStripMenuItem_Click;
+            // 
+            // lastBackupToolStripMenuItem
+            // 
+            lastBackupToolStripMenuItem.Name = "lastBackupToolStripMenuItem";
+            lastBackupToolStripMenuItem.Size = new Size(137, 22);
+            lastBackupToolStripMenuItem.Text = "Last Backup";
+            lastBackupToolStripMenuItem.Click += lastBackupToolStripMenuItem_Click;
             // 
             // deleteModPakToolStripMenuItem
             // 
@@ -205,12 +213,6 @@
             UpdateModButton.Text = "Up do Date";
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
-            // 
-            // lastBackupToolStripMenuItem
-            // 
-            lastBackupToolStripMenuItem.Name = "lastBackupToolStripMenuItem";
-            lastBackupToolStripMenuItem.Size = new Size(180, 22);
-            lastBackupToolStripMenuItem.Text = "Last Backup";
             // 
             // Form1
             // 
