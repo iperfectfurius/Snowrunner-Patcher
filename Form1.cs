@@ -255,7 +255,8 @@ namespace Snowrunner_Patcher
         private void advancedPatchingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             advancedPatchingToolStripMenuItem.Checked = !advancedPatchingToolStripMenuItem.Checked;
-            //cf.ConfigData["Game"]["PatchingMode"] = ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), cf.ConfigData["Game"]["PatchingMode"])).ToString();
+            cf.ConfigData["Game"]["PatchingMode"] = advancedPatchingToolStripMenuItem.Checked == true ? Patcher.Method.Advanced.ToString() : Patcher.Method.Simple.ToString();
+            patcher.PatchingMethod = advancedPatchingToolStripMenuItem.Checked == true ? Patcher.Method.Advanced : Patcher.Method.Simple;
         }
     }
 }
