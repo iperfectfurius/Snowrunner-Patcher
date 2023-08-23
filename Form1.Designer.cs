@@ -42,6 +42,7 @@
             replaceBackupToolStripMenuItem = new ToolStripMenuItem();
             lastBackupToolStripMenuItem = new ToolStripMenuItem();
             deleteModPakToolStripMenuItem = new ToolStripMenuItem();
+            forceInstallToolStripMenuItem = new ToolStripMenuItem();
             StatusInfo = new StatusStrip();
             VersionAppLabel = new ToolStripStatusLabel();
             toolStripStatusInfo = new ToolStripStatusLabel();
@@ -102,7 +103,7 @@
             // 
             // modPakToolStripMenuItem
             // 
-            modPakToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { advancedPatchingToolStripMenuItem, openBackupsToolStripMenuItem, deleteModPakToolStripMenuItem });
+            modPakToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { advancedPatchingToolStripMenuItem, openBackupsToolStripMenuItem, deleteModPakToolStripMenuItem, forceInstallToolStripMenuItem });
             modPakToolStripMenuItem.Name = "modPakToolStripMenuItem";
             modPakToolStripMenuItem.Size = new Size(63, 20);
             modPakToolStripMenuItem.Text = "ModPak";
@@ -154,6 +155,14 @@
             deleteModPakToolStripMenuItem.Name = "deleteModPakToolStripMenuItem";
             deleteModPakToolStripMenuItem.Size = new Size(180, 22);
             deleteModPakToolStripMenuItem.Text = "Delete ModPak";
+            deleteModPakToolStripMenuItem.Click += deleteModPakToolStripMenuItem_Click;
+            // 
+            // forceInstallToolStripMenuItem
+            // 
+            forceInstallToolStripMenuItem.Name = "forceInstallToolStripMenuItem";
+            forceInstallToolStripMenuItem.Size = new Size(180, 22);
+            forceInstallToolStripMenuItem.Text = "Force Install";
+            forceInstallToolStripMenuItem.Click += forceInstallToolStripMenuItem_Click;
             // 
             // StatusInfo
             // 
@@ -261,5 +270,6 @@
         private ToolStripMenuItem replaceBackupToolStripMenuItem;
         private ToolStripStatusLabel toolStripStatusInfo;
         private ToolStripMenuItem lastBackupToolStripMenuItem;
+        private ToolStripMenuItem forceInstallToolStripMenuItem;
     }
 }

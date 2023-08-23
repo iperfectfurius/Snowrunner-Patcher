@@ -258,5 +258,17 @@ namespace Snowrunner_Patcher
             cf.ConfigData["Game"]["PatchingMode"] = advancedPatchingToolStripMenuItem.Checked == true ? Patcher.Method.Advanced.ToString() : Patcher.Method.Simple.ToString();
             patcher.PatchingMethod = advancedPatchingToolStripMenuItem.Checked == true ? Patcher.Method.Advanced : Patcher.Method.Simple;
         }
+
+        private void deleteModPakToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Do you want to delete the current ModPak installed?", "Delete ModPak", MessageBoxButtons.YesNo) == DialogResult.No) return;
+
+            File.Delete(ModPakPath);
+        }
+
+        private void forceInstallToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateModButton_Click(sender, EventArgs.Empty);
+        }
     }
 }

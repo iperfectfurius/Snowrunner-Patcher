@@ -65,6 +65,7 @@ namespace Snowrunner_Patcher
             File.Delete(ModPath);
             File.Copy(tempDownloadedFile, ModPath);
             File.Delete(tempDownloadedFile);
+            RestClient.Dispose();
             return true;
         }
         
