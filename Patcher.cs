@@ -25,6 +25,7 @@ namespace Snowrunner_Patcher
         public Patcher(string modPath,string backupFolder, Method patchingMethod = Method.Simple)
         {
             ModPath = modPath;
+
             BackupPath = backupFolder;
             PatchingMethod = patchingMethod;
         }
@@ -39,15 +40,26 @@ namespace Snowrunner_Patcher
 
             return true;
         }
+        public bool CreateBackup(string name)
+        {
+            if (ModPath == null || ModPath == "") return false;
+
+            if (!File.Exists(ModPath)) return false;
+            if (!Directory.Exists(BackupPath)) CreateBackupDirectory();
+
+            CreateBackupPakMod(name);
+
+            return true;
+        }
         private bool CreateBackupDirectory()
         {
             Directory.CreateDirectory(BackupPath);
             return Directory.Exists(BackupPath);
         }
-        private void CreateBackupPakMod()
+        private void CreateBackupPakMod(string name = "")
         {
-            string name = string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
-            File.Copy(ModPath, BackupPath + $"\\{name}.bck");
+            name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
+            File.Copy(ModPath, BackupPath + $"\\{name}.pak");
         }
         public async Task<bool> PatchMod(string modDownload,ToolStripProgressBar progress, string token = "",Method method = Method.Simple)
         {
@@ -59,15 +71,23 @@ namespace Snowrunner_Patcher
             request.AddHeader("Authorization", $"token {token}");
 
             var restResponse = await RestClient.DownloadDataAsync(request);
-            
+            progress.Value = 10;
             File.WriteAllBytes(tempDownloadedFile, restResponse);
             
             File.Delete(ModPath);
             File.Copy(tempDownloadedFile, ModPath);
             File.Delete(tempDownloadedFile);
             RestClient.Dispose();
+            progress.Value = 90;
+
             return true;
         }
-        
+        public bool ReplaceLastBackup(string LastBackUp)
+        {
+            CreateBackup("Replaced_ModPak_");
+            File.Delete(ModPath);
+            File.Copy(LastBackUp, ModPath);
+            return true;
+        }
     }
 }

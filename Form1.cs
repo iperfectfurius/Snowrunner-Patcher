@@ -248,8 +248,18 @@ namespace Snowrunner_Patcher
 
         private void lastBackupToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string[] backupFiles = Directory.GetFiles(BackupFolder).OrderBy(file => new FileInfo(file).Name).ToArray();
+            if (backupFiles.Length == 0)
+            {
+                MessageBox.Show("No Backups found", "Info", MessageBoxButtons.OK);
+                return;
+            }
 
-            if (MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.No) return;
+            string fileToReplace = backupFiles[^1];
+            if (MessageBox.Show($"Do you want to Replace your current ModPak for {fileToReplace.Split('\\')[^1]}?", "Warning", MessageBoxButtons.YesNo,MessageBoxIcon.Warning) == DialogResult.No) return;
+
+            patcher.ReplaceLastBackup(fileToReplace);
+
         }
 
         private void advancedPatchingToolStripMenuItem_Click(object sender, EventArgs e)
