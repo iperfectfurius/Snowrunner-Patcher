@@ -61,26 +61,44 @@ namespace Snowrunner_Patcher
             name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.pak");
         }
-        public async Task<bool> PatchMod(string modDownload,ToolStripProgressBar progress, string token = "",Method method = Method.Simple)
+        public async Task<bool> PatchMod(ToolStripProgressBar progress, string token = "",Method method = Method.Simple)
         {
             //if (method == Method.Simple)
+            string tempDownloadedFile = await DownloadModFromSource(progress, token);
+
+            progress.Value = 50;
+
+            return method == Method.Simple ? await NormalPatch(tempDownloadedFile) : await AdvancedPatch(tempDownloadedFile);
+        }
+
+        private async Task<string> DownloadModFromSource(ToolStripProgressBar progress,string token)
+        {
             progress.Value = 1;
+
             string tempDownloadedFile = BackupPath + $"\\{TEMP_NAME}";
-            RestClient RestClient = new(modDownload);
+            RestClient RestClient = new(MOD_DOWNLOAD_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {token}");
 
             var restResponse = await RestClient.DownloadDataAsync(request);
             progress.Value = 10;
             File.WriteAllBytes(tempDownloadedFile, restResponse);
-            
+            RestClient.Dispose();
+
+            return tempDownloadedFile;
+        }
+        private async Task<bool> NormalPatch(string tempDownloadedFile)
+        {
             File.Delete(ModPath);
             File.Copy(tempDownloadedFile, ModPath);
             File.Delete(tempDownloadedFile);
-            RestClient.Dispose();
-            progress.Value = 90;
 
             return true;
+        }
+
+        private async Task<bool> AdvancedPatch(string tempDownloadedFile)
+        {
+            throw new NotImplementedException();
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {

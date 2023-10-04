@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
-using static Snowrunner_Patcher.Resources.ResourcesApp;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using System.Text.Json.Nodes;
@@ -208,7 +207,7 @@ namespace Snowrunner_Patcher
         private async void UpdateModButton_Click(object sender, EventArgs e)
         {
             patcher.CreateBackup();
-            if (await patcher.PatchMod(MOD_DOWNLOAD_URL, ProgressBar, Token)) UpdateFormPatched();
+            if (await patcher.PatchMod(ProgressBar, Token)) UpdateFormPatched();
         }
         private void UpdateFormPatched()
         {
