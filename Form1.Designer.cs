@@ -50,6 +50,7 @@
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
+            createBackupToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             StatusInfo.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -117,7 +118,7 @@
             // 
             // openBackupsToolStripMenuItem
             // 
-            openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
+            openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createBackupToolStripMenuItem, openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
             openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
             openBackupsToolStripMenuItem.Size = new Size(180, 22);
             openBackupsToolStripMenuItem.Text = "Backups";
@@ -223,6 +224,13 @@
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
             // 
+            // createBackupToolStripMenuItem
+            // 
+            createBackupToolStripMenuItem.Name = "createBackupToolStripMenuItem";
+            createBackupToolStripMenuItem.Size = new Size(186, 22);
+            createBackupToolStripMenuItem.Text = "Create Backup";
+            createBackupToolStripMenuItem.Click += createBackupToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -271,5 +279,6 @@
         private ToolStripStatusLabel toolStripStatusInfo;
         private ToolStripMenuItem lastBackupToolStripMenuItem;
         private ToolStripMenuItem forceInstallToolStripMenuItem;
+        private ToolStripMenuItem createBackupToolStripMenuItem;
     }
 }

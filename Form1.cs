@@ -19,7 +19,7 @@ namespace Snowrunner_Patcher
         private static readonly Dictionary<(string, string), string> DefaultConfig =
             new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" }, { ("Game", "PatchingMode"), Patcher.Method.Simple.ToString() } };
         private Config cf = new(defaultConfig: DefaultConfig);
-        private string ModVersionInstalled;
+        private string LastVersionInstalled, CurrentVersionIntalled;
         private Patcher patcher;
         private string ModVersionReleased;
 
@@ -27,6 +27,7 @@ namespace Snowrunner_Patcher
         private string ModPakPath => cf.ConfigData["Game"]["ModsPath"];
         private string ModPakName => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[^1]);
         private string BackupFolder => cf.DirectoryConfig + "\\Backups";
+        private string PatchingMode => cf.ConfigData["Game"]["PatchingMode"];
         public Form1()
         {
             InitializeComponent();
@@ -41,25 +42,32 @@ namespace Snowrunner_Patcher
         private void IniForm()
         {
             VersionAppLabel.Text = APP_VERSION;
-            ModVersionInstalled = cf.ConfigData["Game"]["ModVersion"];
-            ModVersionLabel.Text += ModVersionInstalled;
+            LastVersionInstalled = cf.ConfigData["Game"]["ModVersion"];
+            ModVersionLabel.Text += LastVersionInstalled;
         }
         private void CheckConfig()
         {
-            if (cf.ConfigData["Game"]["ModsPath"] == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
+            if (ModPakPath == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
 
-            changeModPathToolStripMenuItem.ToolTipText = cf.ConfigData["Game"]["ModsPath"];
+            changeModPathToolStripMenuItem.ToolTipText = ModPakPath;
 
-            if (cf.ConfigData["Game"]["PatchingMode"] == null) cf.ConfigData["Game"]["PatchingMode"] = Patcher.Method.Simple.ToString();
+            if (PatchingMode == null) cf.ConfigData["Game"]["PatchingMode"] = Patcher.Method.Simple.ToString();
 
-            if ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), cf.ConfigData["Game"]["PatchingMode"]) == Patcher.Method.Advanced)
+            if ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode) == Patcher.Method.Advanced)
                 advancedPatchingToolStripMenuItem.Checked = true;
 
+            CheckLastVersionInstalled();
 
         }
+
+        private void CheckLastVersionInstalled()
+        {
+            //throw new NotImplementedException();
+        }
+
         private void LoadPatcher()
         {
-            Patcher.Method method = (Patcher.Method)Enum.Parse(typeof(Patcher.Method), cf.ConfigData["Game"]["PatchingMode"]);
+            Patcher.Method method = (Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode);
             patcher = new(cf.ConfigData["Game"]["ModsPath"], BackupFolder, method);
         }
         private void IniConfig()
@@ -182,7 +190,7 @@ namespace Snowrunner_Patcher
             var restResponse = await RestClient.GetAsync(request);
             ModVersionReleased = restResponse.Content;
 
-            if (ModVersionReleased != ModVersionInstalled || !File.Exists(ModPakPath)) ShowNewModVersion(restResponse.Content);
+            if (ModVersionReleased != LastVersionInstalled || !File.Exists(ModPakPath)) ShowNewModVersion(restResponse.Content);
 
             ShowModVersionReleased();
             return true;
@@ -206,14 +214,13 @@ namespace Snowrunner_Patcher
 
         private async void UpdateModButton_Click(object sender, EventArgs e)
         {
-            patcher.CreateBackup();
             if (await patcher.PatchMod(ProgressBar, Token)) UpdateFormPatched();
         }
         private void UpdateFormPatched()
         {
             UpdateModButton.Enabled = false;
             UpdateModButton.Text = "Patch Applied!";
-            ProgressBar.Value = 100;
+            //ProgressBar.Value = 100;
             cf.ConfigData["Game"]["ModVersion"] = ModVersionReleased;
         }
 
@@ -255,7 +262,7 @@ namespace Snowrunner_Patcher
             }
 
             string fileToReplace = backupFiles[^1];
-            if (MessageBox.Show($"Do you want to Replace your current ModPak for {fileToReplace.Split('\\')[^1]}?", "Warning", MessageBoxButtons.YesNo,MessageBoxIcon.Warning) == DialogResult.No) return;
+            if (MessageBox.Show($"Do you want to Replace your current ModPak for {fileToReplace.Split('\\')[^1]}?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) return;
 
             patcher.ReplaceLastBackup(fileToReplace);
 
@@ -264,8 +271,8 @@ namespace Snowrunner_Patcher
         private void advancedPatchingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             advancedPatchingToolStripMenuItem.Checked = !advancedPatchingToolStripMenuItem.Checked;
-            cf.ConfigData["Game"]["PatchingMode"] = advancedPatchingToolStripMenuItem.Checked == true ? Patcher.Method.Advanced.ToString() : Patcher.Method.Simple.ToString();
-            patcher.PatchingMethod = advancedPatchingToolStripMenuItem.Checked == true ? Patcher.Method.Advanced : Patcher.Method.Simple;
+            cf.ConfigData["Game"]["PatchingMode"] = advancedPatchingToolStripMenuItem.Checked ? Patcher.Method.Advanced.ToString() : Patcher.Method.Simple.ToString();
+            patcher.PatchingMethod = advancedPatchingToolStripMenuItem.Checked ? Patcher.Method.Advanced : Patcher.Method.Simple;
         }
 
         private void deleteModPakToolStripMenuItem_Click(object sender, EventArgs e)
@@ -278,6 +285,11 @@ namespace Snowrunner_Patcher
         private void forceInstallToolStripMenuItem_Click(object sender, EventArgs e)
         {
             UpdateModButton_Click(sender, EventArgs.Empty);
+        }
+
+        private void createBackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            patcher.CreateBackup();
         }
     }
 }
