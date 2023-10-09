@@ -13,7 +13,7 @@ namespace Snowrunner_Patcher
 {
     internal class Patcher
     {
-        public enum Method:byte
+        public enum Method : byte
         {
             Simple,
             Advanced
@@ -24,7 +24,7 @@ namespace Snowrunner_Patcher
         public Method PatchingMethod;
         private ToolStripProgressBar progressBar;
 
-        public Patcher(string modPath,string backupFolder, Method patchingMethod = Method.Simple)
+        public Patcher(string modPath, string backupFolder, Method patchingMethod = Method.Simple)
         {
             ModPath = modPath;
 
@@ -63,19 +63,19 @@ namespace Snowrunner_Patcher
             name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.pak");
         }
-        public async Task<bool> PatchMod(ToolStripProgressBar progress, string token = "",bool createBackup = true)
+        public async Task<bool> PatchMod(ToolStripProgressBar progress, string token = "", bool createBackup = true)
         {
             //if (method == Method.Simple)
             progressBar = progress;
             if (createBackup) CreateBackup();
             string tempDownloadedFile = await DownloadModFromSource(token);
 
-            return PatchingMethod == Method.Simple ?  NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile);
+            return PatchingMethod == Method.Simple ? NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile);
         }
 
         private async Task<string> DownloadModFromSource(string token)
         {
- 
+
 
             string tempDownloadedFile = BackupPath + $"\\{TEMP_NAME}";
             RestClient RestClient = new(MOD_DOWNLOAD_URL);
@@ -101,22 +101,50 @@ namespace Snowrunner_Patcher
 
         private bool AdvancedPatch(string tempDownloadedFile)
         {
-            string tempUnzipPak =  $"{BackupPath}\\tempNewVersion", tempUnzipCurrentPakInstalled = $"{BackupPath}\\tempCurrentInstalled";
+            string tempUnzipPak = $"{BackupPath}\\tempNewVersion", tempUnzipCurrentPakInstalled = $"{BackupPath}\\tempCurrentInstalled";
 
             ZipFile.ExtractToDirectory(tempDownloadedFile, tempUnzipPak);
-
             progressBar.Value = 35;
 
             ZipFile.ExtractToDirectory(ModPath, tempUnzipCurrentPakInstalled);
-
             progressBar.Value = 50;
 
-            Directory.Delete(tempUnzipPak,true);
-            
-            Directory.Delete(tempUnzipCurrentPakInstalled,true);
+            PatchOlderVersion(tempUnzipPak, tempUnzipCurrentPakInstalled);
+
+            Directory.Delete(tempUnzipPak, true);
+            Directory.Delete(tempUnzipCurrentPakInstalled, true);
 
             //throw new NotImplementedException();
             return true;
+        }
+        private void PatchOlderVersion(string newVersionPath, string olderVersionPath)
+        {
+            string olderParentFolder = String.Join("\\", olderVersionPath.Split("\\")[..^1]) + "\\" +olderVersionPath.Split("\\")[^1];
+
+            foreach (string subdir in Directory.GetDirectories(newVersionPath))
+            {
+                string olderSubParentFolder = $"{olderParentFolder}\\{subdir.Split("\\")[^1]}";//This will allow to create mod folders if exists
+
+                if (!Directory.Exists(olderSubParentFolder))
+                    Directory.CreateDirectory(olderSubParentFolder);
+
+                PatchOlderVersion(subdir, olderSubParentFolder);
+            }
+
+            DirectoryInfo dir = new DirectoryInfo(newVersionPath);
+            FileInfo[] files = dir.GetFiles().Where(e =>
+            {
+
+                return e.LastWriteTime > DateTime.Parse("01/01/1981",System.Globalization.CultureInfo.InvariantCulture);
+            }).ToArray();
+
+            if (files.Length == 0) return;
+
+
+        }
+        private void Replace(string newVersionPath, string olderVersionPath)
+        {
+            File.Replace(newVersionPath, olderVersionPath, null);
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {

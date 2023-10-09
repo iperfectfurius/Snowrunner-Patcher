@@ -101,7 +101,18 @@ namespace Snowrunner_Patcher
         {
             await CheckAppVersion();
             Token = await GetToken.GetTokenFromRequest();
-            await CheckModVersion();
+            if (Token != "Error") //Todo Handle error{}
+            {
+                forceInstallToolStripMenuItem.Enabled = true;
+                await CheckModVersion();
+            }
+                
+            else
+            {
+                forceInstallToolStripMenuItem.Enabled = false;
+                forceInstallToolStripMenuItem.ToolTipText = "Error on check new version";
+            }
+
         }
 
         private async Task<bool> CheckAppVersion()

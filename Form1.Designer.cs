@@ -37,6 +37,7 @@
             modPakToolStripMenuItem = new ToolStripMenuItem();
             advancedPatchingToolStripMenuItem = new ToolStripMenuItem();
             openBackupsToolStripMenuItem = new ToolStripMenuItem();
+            createBackupToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
             deleteAllToolStripMenuItem = new ToolStripMenuItem();
             replaceBackupToolStripMenuItem = new ToolStripMenuItem();
@@ -50,7 +51,6 @@
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
-            createBackupToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             StatusInfo.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -123,6 +123,13 @@
             openBackupsToolStripMenuItem.Size = new Size(180, 22);
             openBackupsToolStripMenuItem.Text = "Backups";
             // 
+            // createBackupToolStripMenuItem
+            // 
+            createBackupToolStripMenuItem.Name = "createBackupToolStripMenuItem";
+            createBackupToolStripMenuItem.Size = new Size(186, 22);
+            createBackupToolStripMenuItem.Text = "Create Backup";
+            createBackupToolStripMenuItem.Click += createBackupToolStripMenuItem_Click;
+            // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
@@ -160,6 +167,7 @@
             // 
             // forceInstallToolStripMenuItem
             // 
+            forceInstallToolStripMenuItem.Enabled = false;
             forceInstallToolStripMenuItem.Name = "forceInstallToolStripMenuItem";
             forceInstallToolStripMenuItem.Size = new Size(180, 22);
             forceInstallToolStripMenuItem.Text = "Force Install";
@@ -223,13 +231,6 @@
             UpdateModButton.Text = "Up do Date";
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
-            // 
-            // createBackupToolStripMenuItem
-            // 
-            createBackupToolStripMenuItem.Name = "createBackupToolStripMenuItem";
-            createBackupToolStripMenuItem.Size = new Size(186, 22);
-            createBackupToolStripMenuItem.Text = "Create Backup";
-            createBackupToolStripMenuItem.Click += createBackupToolStripMenuItem_Click;
             // 
             // Form1
             // 
