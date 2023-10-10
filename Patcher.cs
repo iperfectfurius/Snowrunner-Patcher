@@ -101,23 +101,26 @@ namespace Snowrunner_Patcher
 
         private bool AdvancedPatch(string tempDownloadedFile)
         {
-            string tempUnzipPak = $"{BackupPath}\\tempNewVersion", tempUnzipCurrentPakInstalled = $"{BackupPath}\\tempCurrentInstalled";
+            string tempUnzipNewPak = $"{BackupPath}\\tempNewVersion", tempUnzipCurrentPakInstalled = $"{BackupPath}\\tempCurrentInstalled";
 
-            ZipFile.ExtractToDirectory(tempDownloadedFile, tempUnzipPak);
+            ZipFile.ExtractToDirectory(tempDownloadedFile, tempUnzipNewPak);
             progressBar.Value = 35;
 
             ZipFile.ExtractToDirectory(ModPath, tempUnzipCurrentPakInstalled);
             progressBar.Value = 50;
 
-            PatchOlderVersion(tempUnzipPak, tempUnzipCurrentPakInstalled);
+            PatchOlderVersionFiles(tempUnzipNewPak, tempUnzipCurrentPakInstalled);
 
-            Directory.Delete(tempUnzipPak, true);
+            File.Delete(ModPath);
+            ZipFile.CreateFromDirectory(tempUnzipNewPak,ModPath);
+
+            Directory.Delete(tempUnzipNewPak, true);
             Directory.Delete(tempUnzipCurrentPakInstalled, true);
 
             //throw new NotImplementedException();
             return true;
         }
-        private void PatchOlderVersion(string newVersionPath, string olderVersionPath)
+        private void PatchOlderVersionFiles(string newVersionPath, string olderVersionPath)
         {
             string olderParentFolder = String.Join("\\", olderVersionPath.Split("\\")[..^1]) + "\\" +olderVersionPath.Split("\\")[^1];
 
@@ -128,7 +131,7 @@ namespace Snowrunner_Patcher
                 if (!Directory.Exists(olderSubParentFolder))
                     Directory.CreateDirectory(olderSubParentFolder);
 
-                PatchOlderVersion(subdir, olderSubParentFolder);
+                PatchOlderVersionFiles(subdir, olderSubParentFolder);
             }
 
             DirectoryInfo dir = new DirectoryInfo(newVersionPath);
@@ -139,12 +142,10 @@ namespace Snowrunner_Patcher
             }).ToArray();
 
             if (files.Length == 0) return;
-
-
-        }
-        private void Replace(string newVersionPath, string olderVersionPath)
-        {
-            File.Replace(newVersionPath, olderVersionPath, null);
+           
+            foreach (FileInfo file in files){
+                file.CopyTo($"{olderParentFolder}\\{file.Name}",true);
+            }
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {
