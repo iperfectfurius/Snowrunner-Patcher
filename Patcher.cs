@@ -101,91 +101,42 @@ namespace Snowrunner_Patcher
 
         private bool AdvancedPatch(string tempDownloadedFile)
         {
-            string tempUnzipNewPak = $"{BackupPath}\\tempNewVersion", tempUnzipCurrentPakInstalled = $"{BackupPath}\\tempCurrentInstalled";
-
-            //ZipFile.ExtractToDirectory(tempDownloadedFile, tempUnzipNewPak);
-            //progressBar.Value = 35;
-
-            //ZipFile.ExtractToDirectory(ModPath, tempUnzipCurrentPakInstalled);
-            //progressBar.Value = 50;
-
             PatchOlderVersionFiles(tempDownloadedFile);
-
-            //File.Delete(ModPath);
-            //ZipFile.CreateFromDirectory(tempUnzipNewPak,ModPath);
-
-            Directory.Delete(tempUnzipNewPak, true);
-            Directory.Delete(tempUnzipCurrentPakInstalled, true);
-
-            //throw new NotImplementedException();
             return true;
         }
         private void PatchOlderVersionFiles(string newVersionPath)
         {
-
-            List<string> fileToPatch = new List<string>();
+            string tempPathToExtract = $"{BackupPath}\\Temp\\";
+            if (!Directory.Exists(tempPathToExtract)) Directory.CreateDirectory(tempPathToExtract);
 
             using (ZipArchive currentPatch = ZipFile.Open(ModPath, ZipArchiveMode.Update))
             {
                 using (ZipArchive newVersionPatch = ZipFile.Open(newVersionPath, ZipArchiveMode.Read))
                 {
-                    //zip.GetEntry();
-                    //Console.WriteLine();
-
                     foreach (ZipArchiveEntry entry in newVersionPatch.Entries)
                     {
                         if (entry.LastWriteTime > DateTime.Parse("01/01/1981", System.Globalization.CultureInfo.InvariantCulture))
                         {
-                            entry.ExtractToFile($"{BackupPath}\\{entry.Name}");
-                            currentPatch.CreateEntryFromFile($"{BackupPath}\\{entry.Name}",entry.FullName);
+                            entry.ExtractToFile($"{tempPathToExtract + entry.Name}");
+                            currentPatch.CreateEntryFromFile($"{tempPathToExtract + entry.Name}", entry.FullName);
                         }
-
-                            
                     }
                 }
             }
 
-                Console.WriteLine();
+            Directory.Delete(tempPathToExtract, true);
 
-                //foreach (string subdir in Directory.GetDirectories(newVersionPath))
-                //{
-                //    string olderSubParentFolder = $"{olderParentFolder}\\{subdir.Split("\\")[^1]}";//This will allow to create mod folders if exists
-
-                //    if (!Directory.Exists(olderSubParentFolder))
-                //        Directory.CreateDirectory(olderSubParentFolder);
-
-                //    PatchOlderVersionFiles(subdir, olderSubParentFolder);
-                //}
-
-                //DirectoryInfo dir = new DirectoryInfo(newVersionPath);
-                //FileInfo[] files = dir.GetFiles().Where(e =>
-                //{
-                //    return e.LastWriteTime > DateTime.Parse("01/01/1981",System.Globalization.CultureInfo.InvariantCulture);
-                //}).ToArray();
-
-                //if (files.Length == 0) return;
-
-
-
-                //foreach (FileInfo file in files)
-                //{
-                //    //file.CopyTo($"{olderParentFolder}\\{file.Name}", true);
-                //    //ZipArchiveEntry? temp = zip.GetEntry(file.FullName);
-                //    //Console.WriteLine();
-                //}
-
-
-            }
-            public bool ReplaceLastBackup(string LastBackUp)
-            {
-                CreateBackup("Replaced_ModPak_");
-                File.Delete(ModPath);
-                File.Copy(LastBackUp, ModPath);
-                return true;
-            }
-            private void CreateVersionModFile(string path)
-            {
-                if (File.Exists(path + "\\Version.txt")) File.Delete(path + "\\Version.txt");
-            }
+        }
+        public bool ReplaceLastBackup(string LastBackUp)
+        {
+            CreateBackup("Replaced_ModPak_");
+            File.Delete(ModPath);
+            File.Copy(LastBackUp, ModPath);
+            return true;
+        }
+        private void CreateVersionModFile(string path)
+        {
+            if (File.Exists(path + "\\Version.txt")) File.Delete(path + "\\Version.txt");
         }
     }
+}
