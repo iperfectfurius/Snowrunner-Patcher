@@ -63,29 +63,29 @@ namespace Snowrunner_Patcher
             name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.pak");
         }
-        public async Task<bool> PatchMod(ToolStripProgressBar progress, string token = "", bool createBackup = true)
+        public async Task<bool> PatchMod(Form1 patchForm, string token = "", bool createBackup = true)
         {
             //if (method == Method.Simple)
-            progressBar = progress;
+            //progressBar = progress;
             if (createBackup) CreateBackup();
             string tempDownloadedFile = await DownloadModFromSource(token);
 
-            return PatchingMethod == Method.Simple ? NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile);
+            return PatchingMethod == Method.Simple ? NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile,patchForm);
         }
 
         private async Task<string> DownloadModFromSource(string token)
         {
-
-
             string tempDownloadedFile = BackupPath + $"\\{TEMP_NAME}";
             RestClient RestClient = new(MOD_DOWNLOAD_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {token}");
 
             var restResponse = await RestClient.DownloadDataAsync(request);
-            progressBar.Value = 10;
+            //progressBar.Value = 25;
 
             File.WriteAllBytes(tempDownloadedFile, restResponse);
+
+            //progressBar.Value = 30;
             RestClient.Dispose();
 
             return tempDownloadedFile;
@@ -99,13 +99,12 @@ namespace Snowrunner_Patcher
             return true;
         }
 
-        private bool AdvancedPatch(string tempDownloadedFile)
+        private bool AdvancedPatch(string tempDownloadedFile, Form1 patchForm)
         {
-            PatchOlderVersionFiles(tempDownloadedFile);
-            progressBar.Value = 100;
+            PatchOlderVersionFiles(tempDownloadedFile, patchForm);
             return true;
         }
-        private void PatchOlderVersionFiles(string newVersionPath)
+        private void PatchOlderVersionFiles(string newVersionPath, Form1 patchForm)
         {
             string tempPathToExtract = $"{BackupPath}\\Temp\\";
             if (!Directory.Exists(tempPathToExtract)) Directory.CreateDirectory(tempPathToExtract);
@@ -114,14 +113,20 @@ namespace Snowrunner_Patcher
             {
                 using (ZipArchive newVersionPatch = ZipFile.Open(newVersionPath, ZipArchiveMode.Read))
                 {
+                    int numberOfFiles = newVersionPatch.Entries.Count;
+                    int currentItem = 0;
+
                     foreach (ZipArchiveEntry entry in newVersionPatch.Entries)
                     {
+                        //checks for modded files
                         if (entry.LastWriteTime > DateTime.Parse("01/01/1981", System.Globalization.CultureInfo.InvariantCulture))
                         {
                             entry.ExtractToFile(tempPathToExtract + entry.Name);
                             currentPatch.GetEntry(entry.FullName).Delete();
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
                         }
+                        currentItem++;
+                        patchForm.toolStripStatusLabelInfoPatch.Text = $"{currentItem}/{numberOfFiles} ({(float)((currentItem/numberOfFiles)*100):n2}%)";
                     }
                 }
             }

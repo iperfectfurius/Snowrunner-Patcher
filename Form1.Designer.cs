@@ -47,6 +47,7 @@
             StatusInfo = new StatusStrip();
             VersionAppLabel = new ToolStripStatusLabel();
             toolStripStatusInfo = new ToolStripStatusLabel();
+            toolStripStatusLabelInfoPatch = new ToolStripStatusLabel();
             ProgressBar = new ToolStripProgressBar();
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
@@ -112,7 +113,7 @@
             // advancedPatchingToolStripMenuItem
             // 
             advancedPatchingToolStripMenuItem.Name = "advancedPatchingToolStripMenuItem";
-            advancedPatchingToolStripMenuItem.Size = new Size(180, 22);
+            advancedPatchingToolStripMenuItem.Size = new Size(177, 22);
             advancedPatchingToolStripMenuItem.Text = "Advanced Patching";
             advancedPatchingToolStripMenuItem.Click += advancedPatchingToolStripMenuItem_Click;
             // 
@@ -120,7 +121,7 @@
             // 
             openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createBackupToolStripMenuItem, openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
             openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
-            openBackupsToolStripMenuItem.Size = new Size(180, 22);
+            openBackupsToolStripMenuItem.Size = new Size(177, 22);
             openBackupsToolStripMenuItem.Text = "Backups";
             // 
             // createBackupToolStripMenuItem
@@ -161,7 +162,7 @@
             // deleteModPakToolStripMenuItem
             // 
             deleteModPakToolStripMenuItem.Name = "deleteModPakToolStripMenuItem";
-            deleteModPakToolStripMenuItem.Size = new Size(180, 22);
+            deleteModPakToolStripMenuItem.Size = new Size(177, 22);
             deleteModPakToolStripMenuItem.Text = "Delete ModPak";
             deleteModPakToolStripMenuItem.Click += deleteModPakToolStripMenuItem_Click;
             // 
@@ -169,13 +170,13 @@
             // 
             forceInstallToolStripMenuItem.Enabled = false;
             forceInstallToolStripMenuItem.Name = "forceInstallToolStripMenuItem";
-            forceInstallToolStripMenuItem.Size = new Size(180, 22);
+            forceInstallToolStripMenuItem.Size = new Size(177, 22);
             forceInstallToolStripMenuItem.Text = "Force Install";
             forceInstallToolStripMenuItem.Click += forceInstallToolStripMenuItem_Click;
             // 
             // StatusInfo
             // 
-            StatusInfo.Items.AddRange(new ToolStripItem[] { VersionAppLabel, toolStripStatusInfo, ProgressBar });
+            StatusInfo.Items.AddRange(new ToolStripItem[] { VersionAppLabel, toolStripStatusInfo, toolStripStatusLabelInfoPatch, ProgressBar });
             StatusInfo.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             StatusInfo.Location = new Point(0, 166);
             StatusInfo.Name = "StatusInfo";
@@ -191,6 +192,11 @@
             // 
             toolStripStatusInfo.Name = "toolStripStatusInfo";
             toolStripStatusInfo.Size = new Size(0, 17);
+            // 
+            // toolStripStatusLabelInfoPatch
+            // 
+            toolStripStatusLabelInfoPatch.Name = "toolStripStatusLabelInfoPatch";
+            toolStripStatusLabelInfoPatch.Size = new Size(0, 17);
             // 
             // ProgressBar
             // 
@@ -263,7 +269,6 @@
         private ToolStripMenuItem configToolStripMenuItem;
         private ToolStripMenuItem changeModPathToolStripMenuItem;
         private ToolStripMenuItem openConfigFileToolStripMenuItem;
-        private StatusStrip StatusInfo;
         private ToolStripStatusLabel VersionAppLabel;
         private ToolStripProgressBar ProgressBar;
         private GroupBox groupBox1;
@@ -281,5 +286,7 @@
         private ToolStripMenuItem lastBackupToolStripMenuItem;
         private ToolStripMenuItem forceInstallToolStripMenuItem;
         private ToolStripMenuItem createBackupToolStripMenuItem;
+        public StatusStrip StatusInfo;
+        public ToolStripStatusLabel toolStripStatusLabelInfoPatch;
     }
 }

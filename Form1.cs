@@ -106,7 +106,7 @@ namespace Snowrunner_Patcher
                 forceInstallToolStripMenuItem.Enabled = true;
                 await CheckModVersion();
             }
-                
+
             else
             {
                 forceInstallToolStripMenuItem.Enabled = false;
@@ -225,13 +225,19 @@ namespace Snowrunner_Patcher
 
         private async void UpdateModButton_Click(object sender, EventArgs e)
         {
-            if (await patcher.PatchMod(ProgressBar, Token)) UpdateFormPatched();
+            toolStripStatusInfo.Visible = false;
+            toolStripStatusLabelInfoPatch.Visible = true;
+
+            if (await patcher.PatchMod(this, Token)) UpdateFormPatched();
+
+            toolStripStatusInfo.Visible = true;
+            toolStripStatusLabelInfoPatch.Visible = false;
         }
         private void UpdateFormPatched()
         {
             UpdateModButton.Enabled = false;
             UpdateModButton.Text = "Patch Applied!";
-            //ProgressBar.Value = 100;
+            ProgressBar.Value = 100;
             cf.ConfigData["Game"]["ModVersion"] = ModVersionReleased;
         }
 
