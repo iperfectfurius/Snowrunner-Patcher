@@ -249,8 +249,8 @@
             Controls.Add(groupBox1);
             MainMenuStrip = menuStrip1;
             Name = "Form1";
-            StartPosition = FormStartPosition.CenterScreen;
             Text = "Snowrunner Patcher";
+            StartPosition = FormStartPosition.CenterScreen;
             Load += Form1_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();

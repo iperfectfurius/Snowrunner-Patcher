@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using System.Text.Json.Nodes;
+using System.Runtime.CompilerServices;
 
 namespace Snowrunner_Patcher
 {
@@ -28,6 +29,9 @@ namespace Snowrunner_Patcher
         private string ModPakName => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[^1]);
         private string BackupFolder => cf.DirectoryConfig + "\\Backups";
         private string PatchingMode => cf.ConfigData["Game"]["PatchingMode"];
+        private IProgress<ProgressStruct> Progress;
+
+        delegate void ChangeText(string str);
         public Form1()
         {
             InitializeComponent();
@@ -57,7 +61,6 @@ namespace Snowrunner_Patcher
                 advancedPatchingToolStripMenuItem.Checked = true;
 
             CheckLastVersionInstalled();
-
         }
 
         private void CheckLastVersionInstalled()
@@ -68,7 +71,8 @@ namespace Snowrunner_Patcher
         private void LoadPatcher()
         {
             Patcher.Method method = (Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode);
-            patcher = new(cf.ConfigData["Game"]["ModsPath"], BackupFolder, method);
+            Progress = new Progress<ProgressStruct>(ChangeName);//Reporter
+            patcher = new(cf.ConfigData["Game"]["ModsPath"], BackupFolder,ref Progress, method);
         }
         private void IniConfig()
         {
@@ -223,16 +227,14 @@ namespace Snowrunner_Patcher
             cf.OpenConfig();
         }
 
-        private async void UpdateModButton_Click(object sender, EventArgs e)
+        private void UpdateModButton_Click(object sender, EventArgs e)
         {
             toolStripStatusInfo.Visible = false;
-            toolStripStatusLabelInfoPatch.Visible = true;
+            toolStripStatusLabelInfoPatch.Visible = true;          
 
-            if (await patcher.PatchMod(this, Token)) UpdateFormPatched();
-
-            toolStripStatusInfo.Visible = true;
-            toolStripStatusLabelInfoPatch.Visible = false;
+            Task.Run(() => patcher.PatchMod(Token));
         }
+
         private void UpdateFormPatched()
         {
             UpdateModButton.Enabled = false;
@@ -307,6 +309,11 @@ namespace Snowrunner_Patcher
         private void createBackupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             patcher.CreateBackup();
+        }
+        private void ChangeName(ProgressStruct info)
+        {
+
+            toolStripStatusLabelInfoPatch.Text = info.Info;
         }
     }
 }

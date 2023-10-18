@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -22,14 +23,15 @@ namespace Snowrunner_Patcher
         private readonly string ModPath;
         private readonly string BackupPath;
         public Method PatchingMethod;
-        private ToolStripProgressBar progressBar;
+        private IProgress<ProgressStruct> Progress;
 
-        public Patcher(string modPath, string backupFolder, Method patchingMethod = Method.Simple)
+        public Patcher(string modPath, string backupFolder,ref IProgress<ProgressStruct> progress, Method patchingMethod = Method.Simple)
         {
             ModPath = modPath;
 
             BackupPath = backupFolder;
             PatchingMethod = patchingMethod;
+            Progress = progress;
         }
 
         public bool CreateBackup()
@@ -63,14 +65,14 @@ namespace Snowrunner_Patcher
             name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.pak");
         }
-        public async Task<bool> PatchMod(Form1 patchForm, string token = "", bool createBackup = true)
+        public async Task<bool> PatchMod(string token = "", bool createBackup = true)
         {
-            //if (method == Method.Simple)
-            //progressBar = progress;
             if (createBackup) CreateBackup();
+            Progress.Report(new ProgressStruct(0, 0, "Downloading ModPak..."));
             string tempDownloadedFile = await DownloadModFromSource(token);
+            Progress.Report(new ProgressStruct(0, 0, "Installing ModPak..."));
 
-            return PatchingMethod == Method.Simple ? NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile,patchForm);
+            return PatchingMethod == Method.Simple ? NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile);
         }
 
         private async Task<string> DownloadModFromSource(string token)
@@ -81,11 +83,9 @@ namespace Snowrunner_Patcher
             request.AddHeader("Authorization", $"token {token}");
 
             var restResponse = await RestClient.DownloadDataAsync(request);
-            //progressBar.Value = 25;
 
             File.WriteAllBytes(tempDownloadedFile, restResponse);
 
-            //progressBar.Value = 30;
             RestClient.Dispose();
 
             return tempDownloadedFile;
@@ -99,12 +99,12 @@ namespace Snowrunner_Patcher
             return true;
         }
 
-        private bool AdvancedPatch(string tempDownloadedFile, Form1 patchForm)
+        private bool AdvancedPatch(string tempDownloadedFile)
         {
-            PatchOlderVersionFiles(tempDownloadedFile, patchForm);
+            PatchOlderVersionFiles(tempDownloadedFile);
             return true;
         }
-        private void PatchOlderVersionFiles(string newVersionPath, Form1 patchForm)
+        private void PatchOlderVersionFiles(string newVersionPath)
         {
             string tempPathToExtract = $"{BackupPath}\\Temp\\";
             if (!Directory.Exists(tempPathToExtract)) Directory.CreateDirectory(tempPathToExtract);
@@ -126,13 +126,13 @@ namespace Snowrunner_Patcher
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
                         }
                         currentItem++;
-                        patchForm.toolStripStatusLabelInfoPatch.Text = $"{currentItem}/{numberOfFiles} ({(float)((currentItem/numberOfFiles)*100):n2}%)";
+                        Progress.Report(new ProgressStruct(currentItem, numberOfFiles, $"{currentItem}/{numberOfFiles}"));
                     }
                 }
+
             }
 
             Directory.Delete(tempPathToExtract, true);
-
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {
@@ -140,10 +140,6 @@ namespace Snowrunner_Patcher
             File.Delete(ModPath);
             File.Copy(LastBackUp, ModPath);
             return true;
-        }
-        private void CreateVersionModFile(string path)
-        {
-            if (File.Exists(path + "\\Version.txt")) File.Delete(path + "\\Version.txt");
         }
     }
 }
