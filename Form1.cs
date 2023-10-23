@@ -9,6 +9,7 @@ using System.Xml;
 using Newtonsoft.Json.Linq;
 using System.Text.Json.Nodes;
 using System.Runtime.CompilerServices;
+using Snowrunner_Parcher.Resources;
 
 namespace Snowrunner_Patcher
 {
@@ -20,7 +21,7 @@ namespace Snowrunner_Patcher
         private static readonly Dictionary<(string, string), string> DefaultConfig =
             new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" }, { ("Game", "PatchingMode"), Patcher.Method.Simple.ToString() } };
         private Config cf = new(defaultConfig: DefaultConfig);
-        private string LastVersionInstalled, CurrentVersionIntalled;
+        private string LastVersionInstalled, CurrentVersionInstalled;
         private Patcher patcher;
         private string ModVersionReleased;
 
@@ -29,7 +30,7 @@ namespace Snowrunner_Patcher
         private string ModPakName => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[^1]);
         private string BackupFolder => cf.DirectoryConfig + "\\Backups";
         private string PatchingMode => cf.ConfigData["Game"]["PatchingMode"];
-        private IProgress<ProgressStruct> Progress;
+        private IProgress<ProgressInfo> ProgressPatcher;
 
         delegate void ChangeText(string str);
         public Form1()
@@ -71,8 +72,8 @@ namespace Snowrunner_Patcher
         private void LoadPatcher()
         {
             Patcher.Method method = (Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode);
-            Progress = new Progress<ProgressStruct>(ChangeName);//Reporter
-            patcher = new(cf.ConfigData["Game"]["ModsPath"], BackupFolder,ref Progress, method);
+            ProgressPatcher = new Progress<ProgressInfo>(ChangeName);//Reporter
+            patcher = new(ModPakPath, BackupFolder,ref ProgressPatcher, method);
         }
         private void IniConfig()
         {
@@ -310,10 +311,11 @@ namespace Snowrunner_Patcher
         {
             patcher.CreateBackup();
         }
-        private void ChangeName(ProgressStruct info)
+        private void ChangeName(ProgressInfo info)
         {
 
             toolStripStatusLabelInfoPatch.Text = info.Info;
+            int s = info.Total;
         }
     }
 }

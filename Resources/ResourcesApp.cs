@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Snowrunner_Patcher.Resources
 {
@@ -12,17 +13,6 @@ namespace Snowrunner_Patcher.Resources
         public const string MOD_DOWNLOAD_URL = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/initial.pak";
         public const string APP_VERSION_URL = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-Parcher/master/Snowrunner-Patcher.csproj";
         public const string APP_REALEASED_VERSIONS_URL = @"https://api.github.com/repos/iperfectfurius/Snowrunner-Patcher/releases";
-        public readonly struct ProgressStruct
-        {
-            public ProgressStruct(int patched, int total, string info = "")
-            {
-                Patched = patched;
-                Total = total;
-                Info = info;
-            }
-            public int Patched { get; init; }
-            public int Total { get; init; }
-            public string Info { get; init; }
-        }
     }
 }
+

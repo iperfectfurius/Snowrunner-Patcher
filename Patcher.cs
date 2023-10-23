@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using Snowrunner_Parcher.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,9 +24,9 @@ namespace Snowrunner_Patcher
         private readonly string ModPath;
         private readonly string BackupPath;
         public Method PatchingMethod;
-        private IProgress<ProgressStruct> Progress;
+        private IProgress<ProgressInfo> Progress;
 
-        public Patcher(string modPath, string backupFolder,ref IProgress<ProgressStruct> progress, Method patchingMethod = Method.Simple)
+        public Patcher(string modPath, string backupFolder, ref IProgress<ProgressInfo> progress, Method patchingMethod = Method.Simple)
         {
             ModPath = modPath;
 
@@ -33,7 +34,6 @@ namespace Snowrunner_Patcher
             PatchingMethod = patchingMethod;
             Progress = progress;
         }
-
         public bool CreateBackup()
         {
             if (ModPath == null || ModPath == "") return false;
@@ -67,11 +67,20 @@ namespace Snowrunner_Patcher
         }
         public async Task<bool> PatchMod(string token = "", bool createBackup = true)
         {
-            if (createBackup) CreateBackup();
-            Progress.Report(new ProgressStruct(0, 0, "Downloading ModPak..."));
-            string tempDownloadedFile = await DownloadModFromSource(token);
-            Progress.Report(new ProgressStruct(0, 0, "Installing ModPak..."));
+            ProgressInfo pi = new ProgressInfo();
+            pi.Info = "Creating Backup...";
+            Progress.Report(pi);
 
+            if (createBackup) CreateBackup();
+
+            pi.Info = "Downloading ModPak";
+            Progress.Report(pi);
+
+            string tempDownloadedFile = await DownloadModFromSource(token);
+
+            pi.Info = "Installing ModPak...";
+            Progress.Report(pi);
+ 
             return PatchingMethod == Method.Simple ? NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile);
         }
 
@@ -107,6 +116,8 @@ namespace Snowrunner_Patcher
         private void PatchOlderVersionFiles(string newVersionPath)
         {
             string tempPathToExtract = $"{BackupPath}\\Temp\\";
+            ProgressInfo pi = new ProgressInfo();
+
             if (!Directory.Exists(tempPathToExtract)) Directory.CreateDirectory(tempPathToExtract);
 
             using (ZipArchive currentPatch = ZipFile.Open(ModPath, ZipArchiveMode.Update))
@@ -126,7 +137,8 @@ namespace Snowrunner_Patcher
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
                         }
                         currentItem++;
-                        Progress.Report(new ProgressStruct(currentItem, numberOfFiles, $"{currentItem}/{numberOfFiles}"));
+                        pi.Info = $"{currentItem}/{numberOfFiles}";
+                        Progress.Report(pi);
                     }
                 }
 
