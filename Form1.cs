@@ -61,6 +61,8 @@ namespace Snowrunner_Patcher
             if ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode) == Patcher.Method.Advanced)
                 advancedPatchingToolStripMenuItem.Checked = true;
 
+            Logger.Path = cf.DirectoryConfig;
+
             CheckLastVersionInstalled();
         }
 

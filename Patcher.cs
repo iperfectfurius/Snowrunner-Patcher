@@ -116,6 +116,7 @@ namespace Snowrunner_Patcher
         private void PatchOlderVersionFiles(string newVersionPath)
         {
             string tempPathToExtract = $"{BackupPath}\\Temp\\";
+            List<string> tempFilesReplaced = new();
             ProgressInfo pi = new ProgressInfo();
 
             if (!Directory.Exists(tempPathToExtract)) Directory.CreateDirectory(tempPathToExtract);
@@ -135,10 +136,13 @@ namespace Snowrunner_Patcher
                             entry.ExtractToFile(tempPathToExtract + entry.Name);
                             currentPatch.GetEntry(entry.FullName).Delete();
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
+                            tempFilesReplaced.Add(entry.FullName);
                         }
                         currentItem++;
                         pi.Info = $"{currentItem}/{numberOfFiles}";
-                        Progress.Report(pi);
+
+                        if (pi.percentatge != 0 && pi.percentatge %5 == 0)
+                            Progress.Report(pi);
                     }
                 }
 
