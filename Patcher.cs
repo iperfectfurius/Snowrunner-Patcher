@@ -140,8 +140,8 @@ namespace Snowrunner_Patcher
                         }
                         currentItem++;
                         pi.Info = $"{currentItem}/{numberOfFiles}";
-
-                        if (pi.percentatge != 0 && pi.percentatge %5 == 0)
+                        
+                        if (currentItem %(numberOfFiles/100) == 0)
                             Progress.Report(pi);
                     }
                 }

@@ -315,9 +315,10 @@ namespace Snowrunner_Patcher
         }
         private void ChangeName(ProgressInfo info)
         {
-
+            
             toolStripStatusLabelInfoPatch.Text = info.Info;
             int s = info.Total;
+
         }
     }
 }
