@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using RestSharp;
 using Snowrunner_Parcher.Resources;
 using System;
@@ -20,6 +19,10 @@ namespace Snowrunner_Patcher
             Simple,
             Advanced
         }
+        public enum CurrentState : byte
+        {
+            Finished
+        }
         private const string TEMP_NAME = "initial.pak";
         private readonly string ModPath;
         private readonly string BackupPath;
@@ -29,7 +32,6 @@ namespace Snowrunner_Patcher
         public Patcher(string modPath, string backupFolder, ref IProgress<ProgressInfo> progress, Method patchingMethod = Method.Simple)
         {
             ModPath = modPath;
-
             BackupPath = backupFolder;
             PatchingMethod = patchingMethod;
             Progress = progress;
@@ -147,8 +149,13 @@ namespace Snowrunner_Patcher
                 }
 
             }
+            pi.Info = "Deleting Temporal Files...";
+            Progress.Report(pi);
 
             Directory.Delete(tempPathToExtract, true);
+
+            pi.Info = CurrentState.Finished.ToString();
+            Progress.Report(pi);
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {

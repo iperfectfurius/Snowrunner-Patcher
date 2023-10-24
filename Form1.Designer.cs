@@ -248,9 +248,11 @@
             Controls.Add(menuStrip1);
             Controls.Add(groupBox1);
             MainMenuStrip = menuStrip1;
+            MaximumSize = new Size(375, 227);
+            MinimumSize = new Size(375, 227);
             Name = "Form1";
-            Text = "Snowrunner Patcher";
             StartPosition = FormStartPosition.CenterScreen;
+            Text = "Snowrunner Patcher";
             Load += Form1_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();

@@ -61,7 +61,7 @@ namespace Snowrunner_Patcher
             if ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode) == Patcher.Method.Advanced)
                 advancedPatchingToolStripMenuItem.Checked = true;
 
-            Logger.Path = cf.DirectoryConfig;
+            Logger.Path = cf.DirectoryConfig + "\\Logs";
 
             CheckLastVersionInstalled();
         }
@@ -74,8 +74,8 @@ namespace Snowrunner_Patcher
         private void LoadPatcher()
         {
             Patcher.Method method = (Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode);
-            ProgressPatcher = new Progress<ProgressInfo>(ChangeName);//Reporter
-            patcher = new(ModPakPath, BackupFolder,ref ProgressPatcher, method);
+            ProgressPatcher = new Progress<ProgressInfo>(UpdateReport);//Reporter
+            patcher = new(ModPakPath, BackupFolder, ref ProgressPatcher, method);
         }
         private void IniConfig()
         {
@@ -233,7 +233,8 @@ namespace Snowrunner_Patcher
         private void UpdateModButton_Click(object sender, EventArgs e)
         {
             toolStripStatusInfo.Visible = false;
-            toolStripStatusLabelInfoPatch.Visible = true;          
+            toolStripStatusLabelInfoPatch.Visible = true;
+            forceInstallToolStripMenuItem.Enabled = false;
 
             Task.Run(() => patcher.PatchMod(Token));
         }
@@ -244,6 +245,8 @@ namespace Snowrunner_Patcher
             UpdateModButton.Text = "Patch Applied!";
             ProgressBar.Value = 100;
             cf.ConfigData["Game"]["ModVersion"] = ModVersionReleased;
+            ModVersionLabel.Text = "Mod Version Installed: " + ModVersionReleased;
+            ModVersionLabel.ForeColor = Color.Green;
         }
 
         private void changeModPathToolStripMenuItem_Click(object sender, EventArgs e)
@@ -313,12 +316,18 @@ namespace Snowrunner_Patcher
         {
             patcher.CreateBackup();
         }
-        private void ChangeName(ProgressInfo info)
+        private void UpdateReport(ProgressInfo info)
         {
-            
-            toolStripStatusLabelInfoPatch.Text = info.Info;
-            int s = info.Total;
 
+            toolStripStatusLabelInfoPatch.Text = info.Info;
+
+            if (info.Info == Patcher.CurrentState.Finished.ToString())
+            {
+                forceInstallToolStripMenuItem.Enabled = true;
+                toolStripStatusLabelInfoPatch.Visible = false;
+                toolStripStatusInfo.Visible = true;
+                UpdateFormPatched();
+            }
         }
     }
 }
