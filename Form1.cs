@@ -72,6 +72,11 @@ namespace Snowrunner_Patcher
             else
                 cf.ConfigData["ModPak"]["UrlVersion"] = DEFAULT_VALUE;
 
+            if (cf.ConfigData["ModPak"]["Token"] != null && cf.ConfigData["ModPak"]["Token"] != DEFAULT_VALUE)
+                Token = cf.ConfigData["ModPak"]["Token"];
+            else
+                cf.ConfigData["ModPak"]["Token"] = DEFAULT_VALUE;
+
             Logger.Path = cf.DirectoryConfig + "\\Logs";
 
             CheckCurrentModVersionInstalled();
@@ -118,13 +123,14 @@ namespace Snowrunner_Patcher
         private async void CheckForUpdates()
         {
             await CheckAppVersion();
-            Token = await GetToken.GetTokenFromRequest();
+            if (Token == null)
+                Token = await GetToken.GetTokenFromRequest();
+
             if (Token != "Error") //Todo Handle error{}
             {
                 forceInstallToolStripMenuItem.Enabled = true;
                 await CheckModVersion();
             }
-
             else
             {
                 forceInstallToolStripMenuItem.Enabled = false;
