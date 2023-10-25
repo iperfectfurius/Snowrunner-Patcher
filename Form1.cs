@@ -52,6 +52,7 @@ namespace Snowrunner_Patcher
         }
         private void CheckConfig()
         {
+
             if (ModPakPath == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
 
             changeModPathToolStripMenuItem.ToolTipText = ModPakPath;
@@ -61,12 +62,22 @@ namespace Snowrunner_Patcher
             if ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode) == Patcher.Method.Advanced)
                 advancedPatchingToolStripMenuItem.Checked = true;
 
+            if (cf.ConfigData["ModPak"]["UrlDownload"] != null && cf.ConfigData["ModPak"]["UrlDownload"] != DEFAULT_VALUE)
+                MOD_DOWNLOAD_URL = cf.ConfigData["ModPak"]["UrlDownload"];
+            else
+                cf.ConfigData["ModPak"]["UrlDownload"] = DEFAULT_VALUE;
+
+            if (cf.ConfigData["ModPak"]["UrlVersion"] != null && cf.ConfigData["ModPak"]["UrlVersion"] != DEFAULT_VALUE)
+                MOD_VERSION_URL = cf.ConfigData["ModPak"]["UrlVersion"];
+            else
+                cf.ConfigData["ModPak"]["UrlVersion"] = DEFAULT_VALUE;
+
             Logger.Path = cf.DirectoryConfig + "\\Logs";
 
-            CheckLastVersionInstalled();
+            CheckCurrentModVersionInstalled();
         }
 
-        private void CheckLastVersionInstalled()
+        private void CheckCurrentModVersionInstalled()
         {
             //throw new NotImplementedException();
         }
