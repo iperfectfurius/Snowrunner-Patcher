@@ -7,18 +7,33 @@ using System.Threading.Tasks;
 
 namespace Snowrunner_Parcher.Resources
 {
-    internal class Logger
+    static class Logger
     {
-        public static readonly string Extension = ".log";
-        public static string Path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\" +Assembly.GetCallingAssembly().GetName().Name;
-
-        public static bool WriteLog(string Log,string path)
+        private static readonly string logName = string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
+        private const string EXTENSION = ".log";
+        public static string logPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\" +Assembly.GetCallingAssembly().GetName().Name;
+        public static string fullLogPath => logPath + "\\" + logName + EXTENSION;
+        public static bool WriteLog(string Log,string path = null)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                path = Path;
-         
-            
+
+            if (!string.IsNullOrWhiteSpace(path))
+                logPath = path;
+
+            if (!File.Exists(fullLogPath))
+                CreateLog();
+
+            File.AppendAllText(fullLogPath, Log);
+
             return true;
+        }
+
+        private static void CreateLog()
+        {
+            if (!Directory.Exists(logPath))
+                Directory.CreateDirectory(logPath);
+
+            File.Create(fullLogPath).Close();
+
         }
     }
 }

@@ -156,6 +156,8 @@ namespace Snowrunner_Patcher
 
             pi.Info = CurrentState.Finished.ToString();
             Progress.Report(pi);
+
+            Logger.WriteLog(string.Join(Environment.NewLine, tempFilesReplaced));
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {

@@ -77,7 +77,7 @@ namespace Snowrunner_Patcher
             else
                 cf.ConfigData["ModPak"]["Token"] = DEFAULT_VALUE;
 
-            Logger.Path = cf.DirectoryConfig + "\\Logs";
+            Logger.logPath = cf.DirectoryConfig + "\\Logs";
 
             CheckCurrentModVersionInstalled();
         }
