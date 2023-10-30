@@ -9,31 +9,32 @@ namespace Snowrunner_Parcher.Resources
 {
     static class Logger
     {
-        private static readonly string logName = string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
+        private static readonly string logName = string.Join("_", DateTime.Now.ToString("dd_MM_yyyy").Split(Path.GetInvalidFileNameChars()));
         private const string EXTENSION = ".log";
         public static string logPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\" +Assembly.GetCallingAssembly().GetName().Name;
         public static string fullLogPath => logPath + "\\" + logName + EXTENSION;
-        public static bool WriteLog(string Log,string path = null)
+        private static FileStream? LogFile = null;
+        public static void LoadLogFile(string path = "")
         {
+            if (!string.IsNullOrWhiteSpace(path)) logPath = path;
 
-            if (!string.IsNullOrWhiteSpace(path))
-                logPath = path;
-
-            if (!File.Exists(fullLogPath))
-                CreateLog();
-
-            File.AppendAllText(fullLogPath, Log);
-
+            CreateLog();
+        }
+        public static bool WriteLog(string Log)
+        {
+            LogFile?.Write(Encoding.ASCII.GetBytes(Log));
+            LogFile?.Flush();
             return true;
         }
-
         private static void CreateLog()
         {
             if (!Directory.Exists(logPath))
                 Directory.CreateDirectory(logPath);
 
-            File.Create(fullLogPath).Close();
+            if (LogFile != null) LogFile.Close();
 
+            LogFile = File.Create(fullLogPath);
         }
+
     }
 }

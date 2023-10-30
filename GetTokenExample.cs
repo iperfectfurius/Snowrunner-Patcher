@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Snowrunner_Patcher
 {
-    internal class GetTokenExample
+    internal partial class GetToken
     {
-        
+       
     }
 }

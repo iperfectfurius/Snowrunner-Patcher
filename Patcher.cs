@@ -138,7 +138,7 @@ namespace Snowrunner_Patcher
                             entry.ExtractToFile(tempPathToExtract + entry.Name);
                             currentPatch.GetEntry(entry.FullName).Delete();
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
-                            tempFilesReplaced.Add(entry.FullName);
+                            tempFilesReplaced.Add($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] [{entry.FullName}]: {entry.Length}");
                         }
                         currentItem++;
                         pi.Info = $"{currentItem}/{numberOfFiles}";

@@ -78,6 +78,7 @@ namespace Snowrunner_Patcher
                 cf.ConfigData["ModPak"]["Token"] = DEFAULT_VALUE;
 
             Logger.logPath = cf.DirectoryConfig + "\\Logs";
+            Logger.LoadLogFile();
 
             CheckCurrentModVersionInstalled();
         }
@@ -136,9 +137,7 @@ namespace Snowrunner_Patcher
                 forceInstallToolStripMenuItem.Enabled = false;
                 forceInstallToolStripMenuItem.ToolTipText = "Error on check new version";
             }
-
         }
-
         private async Task<bool> CheckAppVersion()
         {
             const string TempToken = "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";//Development key this has no sense in the future
@@ -345,6 +344,11 @@ namespace Snowrunner_Patcher
                 toolStripStatusInfo.Visible = true;
                 UpdateFormPatched();
             }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            
         }
     }
 }
