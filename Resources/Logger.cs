@@ -20,11 +20,17 @@ namespace Snowrunner_Parcher.Resources
 
             CreateLog();
         }
-        public static bool WriteLog(string Log)
+        public static void WriteLog(string Log, bool flush = true)
         {
+            if (LogFile == null) LoadLogFile();
+
             LogFile?.Write(Encoding.ASCII.GetBytes(Log));
-            LogFile?.Flush();
-            return true;
+            if (flush) LogFile?.Flush();
+
+        }
+        public static void WriteLineLog(string info, bool flush = true)
+        {
+            WriteLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {info} \r\n",flush);
         }
         private static void CreateLog()
         {
@@ -33,7 +39,7 @@ namespace Snowrunner_Parcher.Resources
 
             if (LogFile != null) LogFile.Close();
 
-            LogFile = File.Create(fullLogPath);
+            LogFile = File.Open(fullLogPath,FileMode.Append);
         }
 
     }

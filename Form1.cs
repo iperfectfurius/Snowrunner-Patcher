@@ -86,6 +86,7 @@ namespace Snowrunner_Patcher
         private void CheckCurrentModVersionInstalled()
         {
             //throw new NotImplementedException();
+            // TODO: Check file modpak version
         }
 
         private void LoadPatcher()
@@ -159,6 +160,7 @@ namespace Snowrunner_Patcher
             {
                 toolStripStatusInfo.Text = "Can't Check app versions";
                 toolStripStatusInfo.ForeColor = Color.Red;
+                Logger.WriteLineLog(ex.Message);
                 return false;
             }
 
@@ -325,6 +327,7 @@ namespace Snowrunner_Patcher
 
         private void forceInstallToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Logger.WriteLineLog("FORCE INSTALL INITIATED");
             UpdateModButton_Click(sender, EventArgs.Empty);
         }
 
@@ -348,7 +351,7 @@ namespace Snowrunner_Patcher
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
+            Logger.WriteLineLog("[Program Terminated]");
         }
     }
 }

@@ -35,13 +35,15 @@ namespace Snowrunner_Patcher
             BackupPath = backupFolder;
             PatchingMethod = patchingMethod;
             Progress = progress;
+
+            Logger.WriteLineLog($"[Patcher Loaded info] ModPath : {modPath}, BackupFolder : {backupFolder}, Patching Method : {patchingMethod.ToString()}");
         }
         public bool CreateBackup()
         {
             if (ModPath == null || ModPath == "") return false;
 
             if (!File.Exists(ModPath)) return false;
-            if (!Directory.Exists(ModPath)) CreateBackupDirectory();
+            if (!Directory.Exists(BackupPath)) CreateBackupDirectory();
             CreateBackupPakMod();
 
             return true;
@@ -66,6 +68,7 @@ namespace Snowrunner_Patcher
         {
             name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.pak");
+            Logger.WriteLineLog("[Created Backup] :" + BackupPath + $"\\{name}.pak");
         }
         public async Task<bool> PatchMod(string token = "", bool createBackup = true)
         {
@@ -138,7 +141,7 @@ namespace Snowrunner_Patcher
                             entry.ExtractToFile(tempPathToExtract + entry.Name);
                             currentPatch.GetEntry(entry.FullName).Delete();
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
-                            tempFilesReplaced.Add($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] [{entry.FullName}]: {entry.Length}");
+                            tempFilesReplaced.Add($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] [File Replaced] {entry.FullName} : {entry.Length} bytes");
                         }
                         currentItem++;
                         pi.Info = $"{currentItem}/{numberOfFiles}";
@@ -147,7 +150,6 @@ namespace Snowrunner_Patcher
                             Progress.Report(pi);
                     }
                 }
-
             }
             pi.Info = "Deleting Temporal Files...";
             Progress.Report(pi);
