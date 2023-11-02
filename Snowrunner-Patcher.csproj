@@ -31,4 +31,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Snowrunner_Patcher\" />
+  </ItemGroup>
+
 </Project>

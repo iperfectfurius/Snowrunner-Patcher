@@ -39,6 +39,7 @@ namespace Snowrunner_Patcher
             IniForm();
             CheckConfig();
             LoadPatcher();
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -78,7 +79,8 @@ namespace Snowrunner_Patcher
                 cf.ConfigData["ModPak"]["Token"] = DEFAULT_VALUE;
 
             Logger.logPath = cf.DirectoryConfig + "\\Logs";
-            Logger.LoadLogFile();
+            LoadLogFile();
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(Save);
 
             CheckCurrentModVersionInstalled();
         }
@@ -116,6 +118,7 @@ namespace Snowrunner_Patcher
                 {
                     //Get the path of specified file
                     cf.ConfigData["Game"]["ModsPath"] = openFileDialog.FileName;
+                    Logger.AddLineLog($"[Config] : {ModPakPath}");
                 }
                 else return false;
             }
@@ -160,7 +163,7 @@ namespace Snowrunner_Patcher
             {
                 toolStripStatusInfo.Text = "Can't Check app versions";
                 toolStripStatusInfo.ForeColor = Color.Red;
-                Logger.WriteLineLog(ex.Message);
+                Logger.AddLineLog(ex.Message);
                 return false;
             }
 
@@ -327,7 +330,7 @@ namespace Snowrunner_Patcher
 
         private void forceInstallToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Logger.WriteLineLog("FORCE INSTALL INITIATED");
+            AddLineLog("FORCE INSTALL INITIATED");
             UpdateModButton_Click(sender, EventArgs.Empty);
         }
 
@@ -351,7 +354,12 @@ namespace Snowrunner_Patcher
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Logger.WriteLineLog("[Program Terminated]");
+            AddLineLog("[Program Terminated]");
+        }
+
+        private void openCurrentLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenLog();
         }
     }
 }

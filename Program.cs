@@ -1,4 +1,6 @@
 global using static Snowrunner_Patcher.Resources.ResourcesApp;
+global using static Snowrunner_Parcher.Resources.Logger;
+
 namespace Snowrunner_Patcher
 {
     internal static class Program

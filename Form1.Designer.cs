@@ -52,6 +52,8 @@
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
+            logsToolStripMenuItem = new ToolStripMenuItem();
+            openCurrentLogToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             StatusInfo.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -68,7 +70,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { configToolStripMenuItem, modPakToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { configToolStripMenuItem, modPakToolStripMenuItem, logsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(359, 24);
@@ -113,7 +115,7 @@
             // advancedPatchingToolStripMenuItem
             // 
             advancedPatchingToolStripMenuItem.Name = "advancedPatchingToolStripMenuItem";
-            advancedPatchingToolStripMenuItem.Size = new Size(177, 22);
+            advancedPatchingToolStripMenuItem.Size = new Size(180, 22);
             advancedPatchingToolStripMenuItem.Text = "Advanced Patching";
             advancedPatchingToolStripMenuItem.Click += advancedPatchingToolStripMenuItem_Click;
             // 
@@ -121,7 +123,7 @@
             // 
             openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createBackupToolStripMenuItem, openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
             openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
-            openBackupsToolStripMenuItem.Size = new Size(177, 22);
+            openBackupsToolStripMenuItem.Size = new Size(180, 22);
             openBackupsToolStripMenuItem.Text = "Backups";
             // 
             // createBackupToolStripMenuItem
@@ -162,7 +164,7 @@
             // deleteModPakToolStripMenuItem
             // 
             deleteModPakToolStripMenuItem.Name = "deleteModPakToolStripMenuItem";
-            deleteModPakToolStripMenuItem.Size = new Size(177, 22);
+            deleteModPakToolStripMenuItem.Size = new Size(180, 22);
             deleteModPakToolStripMenuItem.Text = "Delete ModPak";
             deleteModPakToolStripMenuItem.Click += deleteModPakToolStripMenuItem_Click;
             // 
@@ -170,7 +172,7 @@
             // 
             forceInstallToolStripMenuItem.Enabled = false;
             forceInstallToolStripMenuItem.Name = "forceInstallToolStripMenuItem";
-            forceInstallToolStripMenuItem.Size = new Size(177, 22);
+            forceInstallToolStripMenuItem.Size = new Size(180, 22);
             forceInstallToolStripMenuItem.Text = "Force Install";
             forceInstallToolStripMenuItem.Click += forceInstallToolStripMenuItem_Click;
             // 
@@ -238,6 +240,20 @@
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
             // 
+            // logsToolStripMenuItem
+            // 
+            logsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openCurrentLogToolStripMenuItem });
+            logsToolStripMenuItem.Name = "logsToolStripMenuItem";
+            logsToolStripMenuItem.Size = new Size(44, 20);
+            logsToolStripMenuItem.Text = "Logs";
+            // 
+            // openCurrentLogToolStripMenuItem
+            // 
+            openCurrentLogToolStripMenuItem.Name = "openCurrentLogToolStripMenuItem";
+            openCurrentLogToolStripMenuItem.Size = new Size(180, 22);
+            openCurrentLogToolStripMenuItem.Text = "Open Current Log";
+            openCurrentLogToolStripMenuItem.Click += openCurrentLogToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -291,5 +307,7 @@
         private ToolStripMenuItem createBackupToolStripMenuItem;
         public StatusStrip StatusInfo;
         public ToolStripStatusLabel toolStripStatusLabelInfoPatch;
+        private ToolStripMenuItem logsToolStripMenuItem;
+        private ToolStripMenuItem openCurrentLogToolStripMenuItem;
     }
 }
