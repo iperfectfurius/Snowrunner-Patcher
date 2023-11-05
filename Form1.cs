@@ -118,7 +118,7 @@ namespace Snowrunner_Patcher
                 {
                     //Get the path of specified file
                     cf.ConfigData["Game"]["ModsPath"] = openFileDialog.FileName;
-                    Logger.AddLineLog($"[Config] : {ModPakPath}");
+                    AddLineLog($"[Config] : {ModPakPath}");
                 }
                 else return false;
             }
@@ -208,6 +208,9 @@ namespace Snowrunner_Patcher
             }
             catch (Exception ex)
             {
+                toolStripStatusInfo.Text = "Can't Check app versions";
+                toolStripStatusInfo.ForeColor = Color.Red;
+                toolStripStatusInfo.IsLink = false;
                 AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
                 return;
             }

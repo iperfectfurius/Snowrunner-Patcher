@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Snowrunner_Parcher.Resources
 {
@@ -14,10 +15,9 @@ namespace Snowrunner_Parcher.Resources
         private const string EXTENSION = ".log";
         public static string logPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\" + Assembly.GetCallingAssembly().GetName().Name;
         public static string fullLogPath => logPath + "\\" + logName + EXTENSION;
-        //private static FileStream? LogFile = null;
         private static bool createdLog = false;
         private static StringBuilder logInfo = new StringBuilder();
-        //private static Timer logTimer = new Timer();
+        private static System.Timers.Timer logTimer = new System.Timers.Timer(60000);
         public static void LoadLogFile(string path = "")
         {
             if (!string.IsNullOrWhiteSpace(path)) logPath = path;
@@ -40,7 +40,6 @@ namespace Snowrunner_Parcher.Resources
             {
                 AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {line} \r\n", flush);
             }
-
         }
         private static void CreateLog()
         {
@@ -51,6 +50,11 @@ namespace Snowrunner_Parcher.Resources
                 File.Create(fullLogPath).Close();
 
             createdLog = true;
+
+            logTimer.AutoReset = true;
+            logTimer.Elapsed += new ElapsedEventHandler(Save);
+
+            logTimer.Start();
         }
         public static void OpenLog()
         {
@@ -65,7 +69,11 @@ namespace Snowrunner_Parcher.Resources
         }
         private static void ForceSave()
         {
-            if (logInfo.Length > 0) File.AppendAllText(fullLogPath, logInfo.ToString());
+            if (logInfo.Length == 0) return;
+
+            File.AppendAllText(fullLogPath, logInfo.ToString());
+
+            logInfo.Clear();
         }
 
     }
