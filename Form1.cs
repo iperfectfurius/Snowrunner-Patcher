@@ -144,7 +144,7 @@ namespace Snowrunner_Patcher
         }
         private async Task<bool> CheckAppVersion()
         {
-            const string TempToken = "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";//Development key this has no sense in the future
+            const string TempToken = "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";//Development key this has no sense in the future
             string versionReleased = string.Empty;
 
             RestClient RestClient = new(APP_VERSION_URL);
@@ -157,16 +157,16 @@ namespace Snowrunner_Patcher
 
             try
             {
-                if (restResponse == null || restResponse.StatusCode != System.Net.HttpStatusCode.OK) 
+                if (restResponse == null || restResponse.StatusCode != System.Net.HttpStatusCode.OK)
                     throw new Exception("Error on check version app.");
-                    
+
                 doc.LoadXml(restResponse.Content);
             }
             catch (Exception ex)
             {
                 toolStripStatusInfo.Text = "Can't Check app versions";
                 toolStripStatusInfo.ForeColor = Color.Red;
-                AddLineLog(new string[] {$"[Error] {ex.Message}",$"[Call Stack] {new StackTrace()}"});
+                AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
                 return false;
             }
 
@@ -188,7 +188,6 @@ namespace Snowrunner_Patcher
         {
             toolStripStatusInfo.Text = "New APP Version Released";
             toolStripStatusInfo.IsLink = true;
-
         }
 
         private async void OpenDownloadPage()
@@ -201,8 +200,18 @@ namespace Snowrunner_Patcher
             RestClient RestClient = new(APP_REALEASED_VERSIONS_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {TempToken}");
+            RestResponse restResponse = new();
 
-            var restResponse = await RestClient.GetAsync(request);
+            try
+            {
+                restResponse = await RestClient.GetAsync(request);
+            }
+            catch (Exception ex)
+            {
+                AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
+                return;
+            }
+
 
             JObject lastRelease = (JObject)JArray.Parse(restResponse.Content)[0];
 
@@ -367,7 +376,7 @@ namespace Snowrunner_Patcher
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Save(null,null);
+            Save(null, null);
         }
     }
 }
