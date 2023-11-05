@@ -44,6 +44,8 @@
             lastBackupToolStripMenuItem = new ToolStripMenuItem();
             deleteModPakToolStripMenuItem = new ToolStripMenuItem();
             forceInstallToolStripMenuItem = new ToolStripMenuItem();
+            logsToolStripMenuItem = new ToolStripMenuItem();
+            openCurrentLogToolStripMenuItem = new ToolStripMenuItem();
             StatusInfo = new StatusStrip();
             VersionAppLabel = new ToolStripStatusLabel();
             toolStripStatusInfo = new ToolStripStatusLabel();
@@ -52,8 +54,7 @@
             groupBox1 = new GroupBox();
             LastVersionLabel = new Label();
             UpdateModButton = new Button();
-            logsToolStripMenuItem = new ToolStripMenuItem();
-            openCurrentLogToolStripMenuItem = new ToolStripMenuItem();
+            button1 = new Button();
             menuStrip1.SuspendLayout();
             StatusInfo.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -115,7 +116,7 @@
             // advancedPatchingToolStripMenuItem
             // 
             advancedPatchingToolStripMenuItem.Name = "advancedPatchingToolStripMenuItem";
-            advancedPatchingToolStripMenuItem.Size = new Size(180, 22);
+            advancedPatchingToolStripMenuItem.Size = new Size(177, 22);
             advancedPatchingToolStripMenuItem.Text = "Advanced Patching";
             advancedPatchingToolStripMenuItem.Click += advancedPatchingToolStripMenuItem_Click;
             // 
@@ -123,7 +124,7 @@
             // 
             openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createBackupToolStripMenuItem, openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
             openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
-            openBackupsToolStripMenuItem.Size = new Size(180, 22);
+            openBackupsToolStripMenuItem.Size = new Size(177, 22);
             openBackupsToolStripMenuItem.Text = "Backups";
             // 
             // createBackupToolStripMenuItem
@@ -164,7 +165,7 @@
             // deleteModPakToolStripMenuItem
             // 
             deleteModPakToolStripMenuItem.Name = "deleteModPakToolStripMenuItem";
-            deleteModPakToolStripMenuItem.Size = new Size(180, 22);
+            deleteModPakToolStripMenuItem.Size = new Size(177, 22);
             deleteModPakToolStripMenuItem.Text = "Delete ModPak";
             deleteModPakToolStripMenuItem.Click += deleteModPakToolStripMenuItem_Click;
             // 
@@ -172,9 +173,23 @@
             // 
             forceInstallToolStripMenuItem.Enabled = false;
             forceInstallToolStripMenuItem.Name = "forceInstallToolStripMenuItem";
-            forceInstallToolStripMenuItem.Size = new Size(180, 22);
+            forceInstallToolStripMenuItem.Size = new Size(177, 22);
             forceInstallToolStripMenuItem.Text = "Force Install";
             forceInstallToolStripMenuItem.Click += forceInstallToolStripMenuItem_Click;
+            // 
+            // logsToolStripMenuItem
+            // 
+            logsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openCurrentLogToolStripMenuItem });
+            logsToolStripMenuItem.Name = "logsToolStripMenuItem";
+            logsToolStripMenuItem.Size = new Size(44, 20);
+            logsToolStripMenuItem.Text = "Logs";
+            // 
+            // openCurrentLogToolStripMenuItem
+            // 
+            openCurrentLogToolStripMenuItem.Name = "openCurrentLogToolStripMenuItem";
+            openCurrentLogToolStripMenuItem.Size = new Size(169, 22);
+            openCurrentLogToolStripMenuItem.Text = "Open Current Log";
+            openCurrentLogToolStripMenuItem.Click += openCurrentLogToolStripMenuItem_Click;
             // 
             // StatusInfo
             // 
@@ -240,25 +255,24 @@
             UpdateModButton.UseVisualStyleBackColor = true;
             UpdateModButton.Click += UpdateModButton_Click;
             // 
-            // logsToolStripMenuItem
+            // button1
             // 
-            logsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openCurrentLogToolStripMenuItem });
-            logsToolStripMenuItem.Name = "logsToolStripMenuItem";
-            logsToolStripMenuItem.Size = new Size(44, 20);
-            logsToolStripMenuItem.Text = "Logs";
-            // 
-            // openCurrentLogToolStripMenuItem
-            // 
-            openCurrentLogToolStripMenuItem.Name = "openCurrentLogToolStripMenuItem";
-            openCurrentLogToolStripMenuItem.Size = new Size(180, 22);
-            openCurrentLogToolStripMenuItem.Text = "Open Current Log";
-            openCurrentLogToolStripMenuItem.Click += openCurrentLogToolStripMenuItem_Click;
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            button1.Enabled = false;
+            button1.Location = new Point(114, 111);
+            button1.Name = "button1";
+            button1.Size = new Size(129, 23);
+            button1.TabIndex = 5;
+            button1.Text = "temp";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(359, 188);
+            Controls.Add(button1);
             Controls.Add(UpdateModButton);
             Controls.Add(StatusInfo);
             Controls.Add(menuStrip1);
@@ -309,5 +323,6 @@
         public ToolStripStatusLabel toolStripStatusLabelInfoPatch;
         private ToolStripMenuItem logsToolStripMenuItem;
         private ToolStripMenuItem openCurrentLogToolStripMenuItem;
+        private Button button1;
     }
 }

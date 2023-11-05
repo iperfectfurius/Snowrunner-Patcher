@@ -157,13 +157,16 @@ namespace Snowrunner_Patcher
 
             try
             {
+                if (restResponse == null || restResponse.StatusCode != System.Net.HttpStatusCode.OK) 
+                    throw new Exception("Error on check version app.");
+                    
                 doc.LoadXml(restResponse.Content);
             }
             catch (Exception ex)
             {
                 toolStripStatusInfo.Text = "Can't Check app versions";
                 toolStripStatusInfo.ForeColor = Color.Red;
-                Logger.AddLineLog(ex.Message);
+                AddLineLog(new string[] {$"[Error] {ex.Message}",$"[Call Stack] {new StackTrace()}"});
                 return false;
             }
 
@@ -360,6 +363,11 @@ namespace Snowrunner_Patcher
         private void openCurrentLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenLog();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Save(null,null);
         }
     }
 }

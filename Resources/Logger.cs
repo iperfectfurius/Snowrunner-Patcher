@@ -12,7 +12,7 @@ namespace Snowrunner_Parcher.Resources
     {
         private static readonly string logName = string.Join("_", DateTime.Now.ToString("dd_MM_yyyy").Split(Path.GetInvalidFileNameChars()));
         private const string EXTENSION = ".log";
-        public static string logPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\" +Assembly.GetCallingAssembly().GetName().Name;
+        public static string logPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\" + Assembly.GetCallingAssembly().GetName().Name;
         public static string fullLogPath => logPath + "\\" + logName + EXTENSION;
         //private static FileStream? LogFile = null;
         private static bool createdLog = false;
@@ -26,23 +26,30 @@ namespace Snowrunner_Parcher.Resources
         }
         public static void AddToLog(string Log, bool forcedSave = false)
         {
-            //if (LogFile == null) LoadLogFile();
-
-            ////LogFile?.Write(Encoding.ASCII.GetBytes(Log));
-            //if (flush) LogFile?.Flush();
-
+            logInfo.Append(Log);
+            if (forcedSave) ForceSave();
 
         }
         public static void AddLineLog(string info, bool flush = false)
         {
-            AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {info} \r\n",flush);
+            AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {info} \r\n", flush);
+        }
+        public static void AddLineLog(string[] info, bool flush = false)
+        {
+            foreach (string line in info)
+            {
+                AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {line} \r\n", flush);
+            }
+
         }
         private static void CreateLog()
         {
             if (!Directory.Exists(logPath))
                 Directory.CreateDirectory(logPath);
 
-            File.Create(logPath).Close();
+            if (!File.Exists(fullLogPath))
+                File.Create(fullLogPath).Close();
+
             createdLog = true;
         }
         public static void OpenLog()
@@ -52,13 +59,13 @@ namespace Snowrunner_Parcher.Resources
                 UseShellExecute = true
             });
         }
-        public static void Save(dynamic _,dynamic __)
+        public static void Save(object? ob, EventArgs e)
         {
             ForceSave();
         }
         private static void ForceSave()
         {
-            File.AppendAllText(fullLogPath,logInfo.ToString());
+            if (logInfo.Length > 0) File.AppendAllText(fullLogPath, logInfo.ToString());
         }
 
     }
