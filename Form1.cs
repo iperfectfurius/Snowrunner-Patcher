@@ -149,16 +149,18 @@ namespace Snowrunner_Patcher
 
             RestClient RestClient = new(APP_VERSION_URL);
             RestRequest request = new RestRequest();
+            //TODO Remove on release
             request.AddHeader("Authorization", $"token {TempToken}");
-
-            var restResponse = await RestClient.GetAsync(request);
+            RestResponse restResponse;
 
             XmlDocument doc = new XmlDocument();
 
             try
             {
+                restResponse = await RestClient.GetAsync(request);
+
                 if (restResponse == null || restResponse.StatusCode != System.Net.HttpStatusCode.OK)
-                    throw new Exception("Error on check version app.");
+                    throw new Exception($"Error on check version app. {restResponse?.StatusCode}");
 
                 doc.LoadXml(restResponse.Content);
             }
@@ -194,17 +196,18 @@ namespace Snowrunner_Patcher
         {
             bool result = MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes;
 
-            //TODO Remove
-            const string TempToken = "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";//Development key this has no sense in the future
+            //TODO Remove on release
+            const string TempToken = "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";//Development key this has no sense in the future
 
             RestClient RestClient = new(APP_REALEASED_VERSIONS_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {TempToken}");
-            RestResponse restResponse = new();
+            RestResponse restResponse;
 
             try
             {
                 restResponse = await RestClient.GetAsync(request);
+                if (restResponse.StatusCode != System.Net.HttpStatusCode.OK) throw new Exception(restResponse.StatusCode.ToString());
             }
             catch (Exception ex)
             {
@@ -214,7 +217,6 @@ namespace Snowrunner_Patcher
                 AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
                 return;
             }
-
 
             JObject lastRelease = (JObject)JArray.Parse(restResponse.Content)[0];
 
@@ -241,7 +243,19 @@ namespace Snowrunner_Patcher
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {Token}");
 
-            var restResponse = await RestClient.GetAsync(request);
+            RestResponse restResponse;
+
+            try
+            {
+                restResponse = await RestClient.GetAsync(request);
+                if (restResponse.StatusCode != System.Net.HttpStatusCode.OK) throw new Exception(restResponse.StatusCode.ToString());
+            }
+            catch (Exception ex)
+            {
+                AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
+                return false;
+            }
+
             ModVersionReleased = restResponse.Content;
 
             if (ModVersionReleased != LastVersionInstalled || !File.Exists(ModPakPath)) ShowNewModVersion(restResponse.Content);

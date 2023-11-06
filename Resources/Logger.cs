@@ -26,19 +26,26 @@ namespace Snowrunner_Parcher.Resources
         }
         public static void AddToLog(string Log, bool forcedSave = false)
         {
-            logInfo.Append(Log);
+            logInfo.Append(Log + "\r\n");
             if (forcedSave) ForceSave();
-
         }
-        public static void AddLineLog(string info, bool flush = false)
+        public static void AddToLog(string[] Log, bool forcedSave = false)
         {
-            AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {info} \r\n", flush);
+            foreach (string line in Log)
+            {
+                logInfo.Append(line + "\r\n");
+            }              
+            if (forcedSave) ForceSave();
         }
-        public static void AddLineLog(string[] info, bool flush = false)
+        public async static void AddLineLog(string info, bool flush = false)
+        {
+            AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {info}", flush);
+        }
+        public async static void AddLineLog(string[] info, bool flush = false)
         {
             foreach (string line in info)
             {
-                AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {line} \r\n", flush);
+                AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {line}", flush);
             }
         }
         private static void CreateLog()
@@ -75,6 +82,5 @@ namespace Snowrunner_Parcher.Resources
 
             logInfo.Clear();
         }
-
     }
 }

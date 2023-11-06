@@ -36,7 +36,7 @@ namespace Snowrunner_Patcher
             PatchingMethod = patchingMethod;
             Progress = progress;
 
-            Logger.AddLineLog($"[Patcher Loaded info] ModPath : {modPath}, BackupFolder : {backupFolder}, Patching Method : {patchingMethod.ToString()}");
+            AddLineLog($"[Patcher Loaded info] ModPath : {modPath}, BackupFolder : {backupFolder}, Patching Method : {patchingMethod}");
         }
         public bool CreateBackup()
         {
@@ -68,7 +68,7 @@ namespace Snowrunner_Patcher
         {
             name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
             File.Copy(ModPath, BackupPath + $"\\{name}.pak");
-            Logger.AddLineLog("[Created Backup] :" + BackupPath + $"\\{name}.pak");
+            AddLineLog("[Created Backup] :" + BackupPath + $"\\{name}.pak");
         }
         public async Task<bool> PatchMod(string token = "", bool createBackup = true)
         {
@@ -159,13 +159,15 @@ namespace Snowrunner_Patcher
             pi.Info = CurrentState.Finished.ToString();
             Progress.Report(pi);
 
-            Logger.AddToLog(string.Join(Environment.NewLine, tempFilesReplaced));
+            AddToLog(tempFilesReplaced.ToArray());
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {
             CreateBackup("Replaced_ModPak_");
             File.Delete(ModPath);
             File.Copy(LastBackUp, ModPath);
+
+
             return true;
         }
     }
