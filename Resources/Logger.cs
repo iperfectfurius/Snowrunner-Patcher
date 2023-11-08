@@ -37,11 +37,11 @@ namespace Snowrunner_Parcher.Resources
             }              
             if (forcedSave) ForceSave();
         }
-        public async static void AddLineLog(string info, bool flush = false)
+        public static void AddLineLog(string info, bool flush = false)
         {
             AddToLog($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {info}", flush);
         }
-        public async static void AddLineLog(string[] info, bool flush = false)
+        public static void AddLineLog(string[] info, bool flush = false)
         {
             foreach (string line in info)
             {

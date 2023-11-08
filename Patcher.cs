@@ -72,6 +72,8 @@ namespace Snowrunner_Patcher
         }
         public async Task<bool> PatchMod(string token = "", bool createBackup = true)
         {
+            AddLineLog($"[Patch Mod Initiated] Create Backup: {createBackup}");
+
             ProgressInfo pi = new ProgressInfo();
             pi.Info = "Creating Backup...";
             Progress.Report(pi);
@@ -85,7 +87,8 @@ namespace Snowrunner_Patcher
 
             pi.Info = "Installing ModPak...";
             Progress.Report(pi);
- 
+
+            
             return PatchingMethod == Method.Simple ? NormalPatch(tempDownloadedFile) : AdvancedPatch(tempDownloadedFile);
         }
 
@@ -96,9 +99,11 @@ namespace Snowrunner_Patcher
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {token}");
 
+            AddLineLog($"[ModPak] ModPak Download Initiated: {MOD_DOWNLOAD_URL}");
             var restResponse = await RestClient.DownloadDataAsync(request);
 
             File.WriteAllBytes(tempDownloadedFile, restResponse);
+            AddLineLog($"[ModPak] ModPak Downloaded: {tempDownloadedFile}");
 
             RestClient.Dispose();
 
@@ -167,7 +172,7 @@ namespace Snowrunner_Patcher
             File.Delete(ModPath);
             File.Copy(LastBackUp, ModPath);
 
-
+            AddLineLog($"[Replaced Backup] {LastBackUp}");
             return true;
         }
     }

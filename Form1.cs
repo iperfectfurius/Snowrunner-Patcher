@@ -286,7 +286,7 @@ namespace Snowrunner_Patcher
             toolStripStatusLabelInfoPatch.Visible = true;
             forceInstallToolStripMenuItem.Enabled = false;
 
-            Task.Run(() => patcher.PatchMod(Token));
+            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}"); ; });
         }
 
         private void UpdateFormPatched()
