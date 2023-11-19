@@ -81,7 +81,7 @@ namespace Snowrunner_Parcher.Resources
                     PathParam = logPath;
                     break;
             }
-
+            ForceSave();
             Process.Start(new ProcessStartInfo(PathParam)
             {
                 UseShellExecute = true

@@ -37,8 +37,8 @@ namespace Snowrunner_Patcher
         public Form1()
         {
             InitializeComponent();
-            IniForm();
             CheckConfig();
+            IniForm();
             LoadPatcher();
 
         }
@@ -51,6 +51,8 @@ namespace Snowrunner_Patcher
             VersionAppLabel.Text = APP_VERSION;
             LastVersionInstalled = cf.ConfigData["Game"]["ModVersion"];
             ModVersionLabel.Text += LastVersionInstalled;
+            CurrentVersionLabel.Text += CurrentVersionInstalled;
+
             AddLineLog($"[Program Initiated] v{APP_VERSION}");
         }
         private void CheckConfig()
@@ -85,6 +87,8 @@ namespace Snowrunner_Patcher
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(SaveLog);
 
             CheckCurrentModVersionInstalled();
+
+
         }
 
         private bool CheckCurrentModVersionInstalled()
@@ -101,9 +105,9 @@ namespace Snowrunner_Patcher
             }
 
             StreamReader read = new StreamReader(versionPatch.Open());
-
             CurrentVersionInstalled = read.ReadToEnd();
             installedModPak.Dispose();
+
             return true;
         }
 
@@ -143,6 +147,7 @@ namespace Snowrunner_Patcher
         }
         private async void CheckForUpdates()
         {
+            //TODO remove and apply the config
             await CheckAppVersion();
             if (Token == null)
                 Token = await GetToken.GetTokenFromRequest();
@@ -156,6 +161,7 @@ namespace Snowrunner_Patcher
             {
                 forceInstallToolStripMenuItem.Enabled = false;
                 forceInstallToolStripMenuItem.ToolTipText = "Error on check new version";
+                AddLineLog($"[Error] Error Checking APP Version");
             }
         }
         private async Task<bool> CheckAppVersion()
@@ -424,7 +430,14 @@ namespace Snowrunner_Patcher
             DirectoryInfo dirInfo = new DirectoryInfo(BackupFolder);
             long dirSize = await Task.Run(() => dirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Sum(file => file.Length));
 
-            if (MessageBox.Show($"Do you want to delete all Backups? {dirSize} Bytes", "Delete All Backups", MessageBoxButtons.YesNo) == DialogResult.No) return;
+            if (MessageBox.Show($"Do you want to delete all Backups? ({dirSize / 1024 / 1024}MB)", "Delete All Backups", MessageBoxButtons.YesNo) == DialogResult.No) return;
+
+            foreach (FileInfo file in dirInfo.GetFiles())
+            {
+                file.Delete();
+            }
+
+            AddLineLog($"[Deleted Backups] Files deleted: {dirInfo.GetFiles().Length}, a total size of {dirSize} bytes");
         }
     }
 }
