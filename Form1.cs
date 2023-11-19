@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.Json.Nodes;
 using System.Runtime.CompilerServices;
 using Snowrunner_Parcher.Resources;
+using System.IO.Compression;
 
 namespace Snowrunner_Patcher
 {
@@ -50,6 +51,7 @@ namespace Snowrunner_Patcher
             VersionAppLabel.Text = APP_VERSION;
             LastVersionInstalled = cf.ConfigData["Game"]["ModVersion"];
             ModVersionLabel.Text += LastVersionInstalled;
+            AddLineLog($"[Program Initiated] v{APP_VERSION}");
         }
         private void CheckConfig()
         {
@@ -80,15 +82,29 @@ namespace Snowrunner_Patcher
 
             Logger.logPath = cf.DirectoryConfig + "\\Logs";
             LoadLogFile();
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(Save);
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(SaveLog);
 
             CheckCurrentModVersionInstalled();
         }
 
-        private void CheckCurrentModVersionInstalled()
+        private bool CheckCurrentModVersionInstalled()
         {
-            //throw new NotImplementedException();
-            // TODO: Check file modpak version
+            //This can happen when the game patches for a new version.
+            ZipArchive installedModPak = ZipFile.Open(ModPakPath, ZipArchiveMode.Read);
+            ZipArchiveEntry? versionPatch = installedModPak.GetEntry("Version.txt");
+
+            if (versionPatch == null)
+            {
+                CurrentVersionInstalled = "Not Found";
+                installedModPak.Dispose();
+                return false;
+            }
+
+            StreamReader read = new StreamReader(versionPatch.Open());
+
+            CurrentVersionInstalled = read.ReadToEnd();
+            installedModPak.Dispose();
+            return true;
         }
 
         private void LoadPatcher()
@@ -258,7 +274,8 @@ namespace Snowrunner_Patcher
 
             ModVersionReleased = restResponse.Content;
 
-            if (ModVersionReleased != LastVersionInstalled || !File.Exists(ModPakPath)) ShowNewModVersion(restResponse.Content);
+            if (ModVersionReleased != LastVersionInstalled || LastVersionInstalled != CurrentVersionInstalled ||
+                !File.Exists(ModPakPath)) ShowNewModVersion(restResponse.Content);
 
             ShowModVersionReleased();
             return true;
@@ -355,6 +372,7 @@ namespace Snowrunner_Patcher
             if (MessageBox.Show("Do you want to delete the current ModPak installed?", "Delete ModPak", MessageBoxButtons.YesNo) == DialogResult.No) return;
 
             File.Delete(ModPakPath);
+            AddLineLog($"[Deleted Modpak] {ModPakPath}");
         }
 
         private void forceInstallToolStripMenuItem_Click(object sender, EventArgs e)
@@ -388,12 +406,25 @@ namespace Snowrunner_Patcher
 
         private void openCurrentLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenLog();
+            Open(OpenParam.LogFile);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Save(null, null);
+            SaveLog(null, null);
+        }
+
+        private void openFolderLogsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Open(OpenParam.LogFolder);
+        }
+
+        private async void deleteAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo(BackupFolder);
+            long dirSize = await Task.Run(() => dirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Sum(file => file.Length));
+
+            if (MessageBox.Show($"Do you want to delete all Backups? {dirSize} Bytes", "Delete All Backups", MessageBoxButtons.YesNo) == DialogResult.No) return;
         }
     }
 }

@@ -18,6 +18,11 @@ namespace Snowrunner_Parcher.Resources
         private static bool createdLog = false;
         private static StringBuilder logInfo = new StringBuilder();
         private static System.Timers.Timer logTimer = new System.Timers.Timer(60000);
+        public enum OpenParam : byte
+        {
+            LogFile,
+            LogFolder
+        }
         public static void LoadLogFile(string path = "")
         {
             if (!string.IsNullOrWhiteSpace(path)) logPath = path;
@@ -59,18 +64,30 @@ namespace Snowrunner_Parcher.Resources
             createdLog = true;
 
             logTimer.AutoReset = true;
-            logTimer.Elapsed += new ElapsedEventHandler(Save);
+            logTimer.Elapsed += new ElapsedEventHandler(SaveLog);
 
             logTimer.Start();
         }
-        public static void OpenLog()
+        public static void Open(OpenParam ToOpen)
         {
-            Process.Start(new ProcessStartInfo(fullLogPath)
+            string PathParam = "";
+
+            switch (ToOpen)
+            {
+                case OpenParam.LogFile:
+                    PathParam = fullLogPath;
+                    break;
+                case OpenParam.LogFolder:
+                    PathParam = logPath;
+                    break;
+            }
+
+            Process.Start(new ProcessStartInfo(PathParam)
             {
                 UseShellExecute = true
             });
         }
-        public static void Save(object? ob, EventArgs e)
+        public static void SaveLog(object? ob, EventArgs e)
         {
             ForceSave();
         }
