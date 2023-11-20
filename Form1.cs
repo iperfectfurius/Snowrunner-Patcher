@@ -148,21 +148,13 @@ namespace Snowrunner_Patcher
         private async void CheckForUpdates()
         {
             //TODO remove and apply the config
-            await CheckAppVersion();
-            if (Token == null)
-                Token = await GetToken.GetTokenFromRequest();
-
-            if (Token != "Error") //Todo Handle error{}
+            if (!await CheckAppVersion())
             {
-                forceInstallToolStripMenuItem.Enabled = true;
-                await CheckModVersion();
-            }
-            else
-            {
-                forceInstallToolStripMenuItem.Enabled = false;
                 forceInstallToolStripMenuItem.ToolTipText = "Error on check new version";
                 AddLineLog($"[Error] Error Checking APP Version");
             }
+
+            if (await CheckModVersion()) forceInstallToolStripMenuItem.Enabled = true;
         }
         private async Task<bool> CheckAppVersion()
         {
@@ -263,7 +255,9 @@ namespace Snowrunner_Patcher
         {
             RestClient RestClient = new(MOD_VERSION_URL);
             RestRequest request = new RestRequest();
-            request.AddHeader("Authorization", $"token {Token}");
+
+            if (Token != null && Token != "") request.AddHeader("Authorization", $"token {Token}");
+
 
             RestResponse restResponse;
 
