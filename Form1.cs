@@ -5,12 +5,10 @@ using System;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
+using static Snowrunner_Patcher.Resources.ResourcesApp;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using System.Text.Json.Nodes;
-using System.Runtime.CompilerServices;
-using Snowrunner_Parcher.Resources;
-using System.IO.Compression;
 
 namespace Snowrunner_Patcher
 {
@@ -20,27 +18,18 @@ namespace Snowrunner_Patcher
         private bool IsIniConfigLoaded = false;
         private static readonly string APP_VERSION = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         private static readonly Dictionary<(string, string), string> DefaultConfig =
-            new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" }, { ("Game", "PatchingMode"), Patcher.Method.Simple.ToString() } };
+            new() { { ("App", "Version"), APP_VERSION }, { ("Game", "ModVersion"), "0" } };
         private Config cf = new(defaultConfig: DefaultConfig);
-        private string LastVersionInstalled, CurrentVersionInstalled;
+        private string ModVersion;
         private Patcher patcher;
-        private string ModVersionReleased;
+        private string Version;
 
-        private string ModPakPathFolder => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[..^1]);
-        private string ModPakPath => cf.ConfigData["Game"]["ModsPath"];
-        private string ModPakName => string.Join('\\', cf.ConfigData["Game"]["ModsPath"].Split('\\')[^1]);
-        private string BackupFolder => cf.DirectoryConfig + "\\Backups";
-        private string PatchingMode => cf.ConfigData["Game"]["PatchingMode"];
-        private IProgress<ProgressInfo> ProgressPatcher;
-
-        delegate void ChangeText(string str);
         public Form1()
         {
             InitializeComponent();
-            CheckConfig();
             IniForm();
+            CheckConfig();
             LoadPatcher();
-
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -49,73 +38,18 @@ namespace Snowrunner_Patcher
         private void IniForm()
         {
             VersionAppLabel.Text = APP_VERSION;
-            LastVersionInstalled = cf.ConfigData["Game"]["ModVersion"];
-            ModVersionLabel.Text += LastVersionInstalled;
-            CurrentVersionLabel.Text += CurrentVersionInstalled;
-
-            AddLineLog($"[Program Initiated] v{APP_VERSION}");
+            ModVersion = cf.ConfigData["Game"]["ModVersion"];
+            ModVersionLabel.Text += ModVersion;
         }
         private void CheckConfig()
         {
+            if (cf.ConfigData["Game"]["ModsPath"] == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
 
-            if (ModPakPath == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
-
-            changeModPathToolStripMenuItem.ToolTipText = ModPakPath;
-
-            if (PatchingMode == null) cf.ConfigData["Game"]["PatchingMode"] = Patcher.Method.Simple.ToString();
-
-            if ((Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode) == Patcher.Method.Advanced)
-                advancedPatchingToolStripMenuItem.Checked = true;
-
-            if (cf.ConfigData["ModPak"]["UrlDownload"] != null && cf.ConfigData["ModPak"]["UrlDownload"] != DEFAULT_VALUE)
-                MOD_DOWNLOAD_URL = cf.ConfigData["ModPak"]["UrlDownload"];
-            else
-                cf.ConfigData["ModPak"]["UrlDownload"] = DEFAULT_VALUE;
-
-            if (cf.ConfigData["ModPak"]["UrlVersion"] != null && cf.ConfigData["ModPak"]["UrlVersion"] != DEFAULT_VALUE)
-                MOD_VERSION_URL = cf.ConfigData["ModPak"]["UrlVersion"];
-            else
-                cf.ConfigData["ModPak"]["UrlVersion"] = DEFAULT_VALUE;
-
-            if (cf.ConfigData["ModPak"]["Token"] != null && cf.ConfigData["ModPak"]["Token"] != DEFAULT_VALUE)
-                Token = cf.ConfigData["ModPak"]["Token"];
-            else
-                cf.ConfigData["ModPak"]["Token"] = DEFAULT_VALUE;
-
-            Logger.logPath = cf.DirectoryConfig + "\\Logs";
-            LoadLogFile();
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(SaveLog);
-
-            CheckCurrentModVersionInstalled();
-
-
+            changeModPathToolStripMenuItem.ToolTipText = cf.ConfigData["Game"]["ModsPath"];
         }
-
-        private bool CheckCurrentModVersionInstalled()
-        {
-            //This can happen when the game patches for a new version.
-            ZipArchive installedModPak = ZipFile.Open(ModPakPath, ZipArchiveMode.Read);
-            ZipArchiveEntry? versionPatch = installedModPak.GetEntry("Version.txt");
-
-            if (versionPatch == null)
-            {
-                CurrentVersionInstalled = "Not Found";
-                installedModPak.Dispose();
-                return false;
-            }
-
-            StreamReader read = new StreamReader(versionPatch.Open());
-            CurrentVersionInstalled = read.ReadToEnd();
-            installedModPak.Dispose();
-
-            return true;
-        }
-
         private void LoadPatcher()
         {
-            Patcher.Method method = (Patcher.Method)Enum.Parse(typeof(Patcher.Method), PatchingMode);
-            ProgressPatcher = new Progress<ProgressInfo>(UpdateReport);//Reporter
-            patcher = new(ModPakPath, BackupFolder, ref ProgressPatcher, method);
+            patcher = new(cf.ConfigData["Game"]["ModsPath"], cf.DirectoryConfig + "\\Backups");
         }
         private void IniConfig()
         {
@@ -138,7 +72,6 @@ namespace Snowrunner_Patcher
                 {
                     //Get the path of specified file
                     cf.ConfigData["Game"]["ModsPath"] = openFileDialog.FileName;
-                    AddLineLog($"[Config] : {ModPakPath}");
                 }
                 else return false;
             }
@@ -147,179 +80,94 @@ namespace Snowrunner_Patcher
         }
         private async void CheckForUpdates()
         {
-            //TODO remove and apply the config
-            await CheckAppVersion();
-            if (Token == null)
-                Token = await GetToken.GetTokenFromRequest();
-
-            if (Token != "Error") //Todo Handle error{}
-            {
-                forceInstallToolStripMenuItem.Enabled = true;
-                await CheckModVersion();
-            }
-            else
-            {
-                forceInstallToolStripMenuItem.Enabled = false;
-                forceInstallToolStripMenuItem.ToolTipText = "Error on check new version";
-                AddLineLog($"[Error] Error Checking APP Version");
-            }
+            if (await CheckAppVersion()) OpenDownloadPage();
+            Token = await GetToken.GetTokenFromRequest();
+            await CheckModVersion();
         }
+
         private async Task<bool> CheckAppVersion()
         {
-            const string TempToken = "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";//Development key this has no sense in the future
-            string versionReleased = string.Empty;
-
+            const string TempToken = "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";//Development key this has no sense in the future
             RestClient RestClient = new(APP_VERSION_URL);
             RestRequest request = new RestRequest();
-            //TODO Remove on release
             request.AddHeader("Authorization", $"token {TempToken}");
-            RestResponse restResponse;
+
+            var restResponse = await RestClient.GetAsync(request);
 
             XmlDocument doc = new XmlDocument();
 
             try
             {
-                restResponse = await RestClient.GetAsync(request);
-
-                if (restResponse == null || restResponse.StatusCode != System.Net.HttpStatusCode.OK)
-                    throw new Exception($"Error on check version app. {restResponse?.StatusCode}");
-
                 doc.LoadXml(restResponse.Content);
             }
             catch (Exception ex)
             {
                 toolStripStatusInfo.Text = "Can't Check app versions";
-                toolStripStatusInfo.ForeColor = Color.Red;
-                AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
                 return false;
             }
+            bool SameVersion = doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText == APP_VERSION;
 
-            versionReleased = doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText;
-
-            bool SameVersion = versionReleased == APP_VERSION;
-
-            if (!SameVersion)
-            {
-                ShowNewAPPVersion();
-
-                OpenDownloadPage();
-            }
+            if (!SameVersion) OpenDownloadPage();
 
             return true;
         }
-
-        private void ShowNewAPPVersion()
-        {
-            toolStripStatusInfo.Text = "New APP Version Released";
-            toolStripStatusInfo.IsLink = true;
-        }
-
         private async void OpenDownloadPage()
         {
-            bool result = MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes;
+            if (MessageBox.Show("New version release. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) != DialogResult.OK) return;
 
-            //TODO Remove on release
-            const string TempToken = "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";//Development key this has no sense in the future
+            const string TempToken = "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";//Development key this has no sense in the future
 
             RestClient RestClient = new(APP_REALEASED_VERSIONS_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {TempToken}");
-            RestResponse restResponse;
 
-            try
-            {
-                restResponse = await RestClient.GetAsync(request);
-                if (restResponse.StatusCode != System.Net.HttpStatusCode.OK) throw new Exception(restResponse.StatusCode.ToString());
-            }
-            catch (Exception ex)
-            {
-                toolStripStatusInfo.Text = "Can't Check app versions";
-                toolStripStatusInfo.ForeColor = Color.Red;
-                toolStripStatusInfo.IsLink = false;
-                AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
-                return;
-            }
+            var restResponse = await RestClient.GetAsync(request);
+            JObject releases = JObject.Parse(restResponse.Content);
 
-            JObject lastRelease = (JObject)JArray.Parse(restResponse.Content)[0];
+            JObject firstResult = (JObject)releases[1];
 
-            if (result)
-            {
-                OpenNewRelease((string)lastRelease["html_url"]);
-            }
-            //toolStripStatusInfo.Tag = ;
-            toolStripStatusInfo.Click += (e, ar) => OpenNewRelease((string)lastRelease["html_url"]);
+
         }
-
-        private void OpenNewRelease(string wepPage)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = wepPage,
-                UseShellExecute = true
-            });
-        }
-
         private async Task<bool> CheckModVersion()
         {
             RestClient RestClient = new(MOD_VERSION_URL);
             RestRequest request = new RestRequest();
             request.AddHeader("Authorization", $"token {Token}");
 
-            RestResponse restResponse;
+            var restResponse = await RestClient.GetAsync(request);
+            Version = restResponse.Content;
 
-            try
-            {
-                restResponse = await RestClient.GetAsync(request);
-                if (restResponse.StatusCode != System.Net.HttpStatusCode.OK) throw new Exception(restResponse.StatusCode.ToString());
-            }
-            catch (Exception ex)
-            {
-                AddLineLog(new string[] { $"[Error] {ex.Message}", $"[Call Stack] {new StackTrace()}" });
-                return false;
-            }
+            if (Version != ModVersion || !File.Exists(cf.ConfigData["Game"]["ModsPath"])) ShowNewVersion(restResponse.Content);
+            else ShowSameVersion();
 
-            ModVersionReleased = restResponse.Content;
-
-            if (ModVersionReleased != LastVersionInstalled || LastVersionInstalled != CurrentVersionInstalled ||
-                !File.Exists(ModPakPath)) ShowNewModVersion(restResponse.Content);
-
-            ShowModVersionReleased();
             return true;
         }
-        private void ShowNewModVersion(string version)
+        private void ShowNewVersion(string version)
         {
             UpdateModButton.Enabled = true;
-            UpdateModButton.Text = "Update to " + version;
-
-            LastVersionLabel.ForeColor = Color.Green;
+            LastVersionLabel.Text += version;
+            UpdateModButton.Text += " To " + version;
         }
-        private void ShowModVersionReleased()
+        private void ShowSameVersion()
         {
-            LastVersionLabel.Text += $" {ModVersionReleased}";
+            UpdateModButton.Text = "Nothing to update";
         }
-
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             cf.OpenConfig();
         }
 
-        private void UpdateModButton_Click(object sender, EventArgs e)
+        private async void UpdateModButton_Click(object sender, EventArgs e)
         {
-            toolStripStatusInfo.Visible = false;
-            toolStripStatusLabelInfoPatch.Visible = true;
-            forceInstallToolStripMenuItem.Enabled = false;
-
-            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}"); ; });
+            patcher.CreateBackup();
+            if (await patcher.PatchMod(MOD_DOWNLOAD_URL, Token)) UpdateFormPatched();
         }
-
         private void UpdateFormPatched()
         {
             UpdateModButton.Enabled = false;
             UpdateModButton.Text = "Patch Applied!";
             ProgressBar.Value = 100;
-            cf.ConfigData["Game"]["ModVersion"] = ModVersionReleased;
-            ModVersionLabel.Text = "Mod Version Installed: " + ModVersionReleased;
-            ModVersionLabel.ForeColor = Color.Green;
+            cf.ConfigData["Game"]["ModVersion"] = Version;
         }
 
         private void changeModPathToolStripMenuItem_Click(object sender, EventArgs e)
@@ -329,115 +177,10 @@ namespace Snowrunner_Patcher
 
         private void openModDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start(new ProcessStartInfo("explorer.exe")
-            {
-                UseShellExecute = true,
-                Arguments = "/select, \"" + ModPakPath + "\""
-            });
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("explorer.exe")
-            {
-                UseShellExecute = true,
-                Arguments = BackupFolder
-            });
-        }
-
-        private void replaceBackupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //Todo replace list of backups
-        }
-
-        private void lastBackupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string[] backupFiles = Directory.GetFiles(BackupFolder).OrderBy(file => new FileInfo(file).Name).ToArray();
-            if (backupFiles.Length == 0)
-            {
-                MessageBox.Show("No Backups found", "Info", MessageBoxButtons.OK);
-                return;
-            }
-
-            string fileToReplace = backupFiles[^1];
-            if (MessageBox.Show($"Do you want to Replace your current ModPak for {fileToReplace.Split('\\')[^1]}?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No) return;
-
-            patcher.ReplaceLastBackup(fileToReplace);
-
-        }
-
-        private void advancedPatchingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            advancedPatchingToolStripMenuItem.Checked = !advancedPatchingToolStripMenuItem.Checked;
-            cf.ConfigData["Game"]["PatchingMode"] = advancedPatchingToolStripMenuItem.Checked ? Patcher.Method.Advanced.ToString() : Patcher.Method.Simple.ToString();
-            patcher.PatchingMethod = advancedPatchingToolStripMenuItem.Checked ? Patcher.Method.Advanced : Patcher.Method.Simple;
-        }
-
-        private void deleteModPakToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Do you want to delete the current ModPak installed?", "Delete ModPak", MessageBoxButtons.YesNo) == DialogResult.No) return;
-
-            File.Delete(ModPakPath);
-            AddLineLog($"[Deleted Modpak] {ModPakPath}");
-        }
-
-        private void forceInstallToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AddLineLog("FORCE INSTALL INITIATED");
-            UpdateModButton_Click(sender, EventArgs.Empty);
-        }
-
-        private void createBackupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            patcher.CreateBackup();
-        }
-        private void UpdateReport(ProgressInfo info)
-        {
-
-            toolStripStatusLabelInfoPatch.Text = info.Info;
-
-            if (info.Info == Patcher.CurrentState.Finished.ToString())
-            {
-                forceInstallToolStripMenuItem.Enabled = true;
-                toolStripStatusLabelInfoPatch.Visible = false;
-                toolStripStatusInfo.Visible = true;
-                UpdateFormPatched();
-            }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            AddLineLog("[Program Terminated]");
-        }
-
-        private void openCurrentLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Open(OpenParam.LogFile);
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SaveLog(null, null);
-        }
-
-        private void openFolderLogsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Open(OpenParam.LogFolder);
-        }
-
-        private async void deleteAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DirectoryInfo dirInfo = new DirectoryInfo(BackupFolder);
-            long dirSize = await Task.Run(() => dirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Sum(file => file.Length));
-
-            if (MessageBox.Show($"Do you want to delete all Backups? ({dirSize / 1024 / 1024}MB)", "Delete All Backups", MessageBoxButtons.YesNo) == DialogResult.No) return;
-
-            foreach (FileInfo file in dirInfo.GetFiles())
-            {
-                file.Delete();
-            }
-
-            AddLineLog($"[Deleted Backups] Files deleted: {dirInfo.GetFiles().Length}, a total size of {dirSize} bytes");
+            //Process.Start(new ProcessStartInfo(fullPathConfig)
+            //{
+            //    UseShellExecute = true
+            //});
         }
     }
 }
