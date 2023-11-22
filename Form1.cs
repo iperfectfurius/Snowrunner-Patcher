@@ -383,7 +383,7 @@ namespace Snowrunner_Patcher
 
         private void createBackupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            patcher.CreateBackup();
+            patcher.CreateBackup("ManualBackup");
         }
         private void UpdateReport(ProgressInfo info)
         {

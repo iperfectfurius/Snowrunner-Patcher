@@ -66,9 +66,9 @@ namespace Snowrunner_Patcher
         }
         private void CreateBackupPakMod(string name = "")
         {
-            name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
-            File.Copy(ModPath, BackupPath + $"\\{name}.pak");
-            AddLineLog("[Created Backup] :" + BackupPath + $"\\{name}.pak");
+            string currentDate = string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
+            File.Copy(ModPath, BackupPath + $"\\{currentDate}{(name != "" ? $"_{name}": "")}.pak");
+            AddLineLog("[Created Backup] :" + BackupPath + $"\\{currentDate}{(name != "" ? $"_{name}" : "")}.pak");
         }
         public async Task<bool> PatchMod(string token = "", bool createBackup = true)
         {
@@ -168,7 +168,7 @@ namespace Snowrunner_Patcher
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {
-            CreateBackup("Replaced_ModPak_");
+            CreateBackup("Replaced_ModPak");
             File.Delete(ModPath);
             File.Copy(LastBackUp, ModPath);
 
