@@ -66,7 +66,7 @@ namespace Snowrunner_Patcher
         }
         private void CreateBackupPakMod(string name = "")
         {
-            string currentDate = string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
+            string currentDate = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             File.Copy(ModPath, BackupPath + $"\\{currentDate}{(name != "" ? $"_{name}": "")}.pak");
             AddLineLog("[Created Backup] :" + BackupPath + $"\\{currentDate}{(name != "" ? $"_{name}" : "")}.pak");
         }
