@@ -121,6 +121,7 @@ namespace Snowrunner_Patcher
         private bool AdvancedPatch(string tempDownloadedFile)
         {
             PatchOlderVersionFiles(tempDownloadedFile);
+            File.Delete(tempDownloadedFile);
             return true;
         }
         private void PatchOlderVersionFiles(string newVersionPath)
@@ -144,7 +145,12 @@ namespace Snowrunner_Patcher
                         if (entry.LastWriteTime > DateTime.Parse("01/01/1981", System.Globalization.CultureInfo.InvariantCulture))
                         {
                             entry.ExtractToFile(tempPathToExtract + entry.Name);
-                            currentPatch.GetEntry(entry.FullName).Delete();
+
+                            if (currentPatch.GetEntry(entry.FullName) == null)
+                                tempFilesReplaced.Add($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] [WARNING] {entry.FullName} : The file does not exist");
+                            else
+                                currentPatch.GetEntry(entry.FullName)?.Delete();
+
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
                             tempFilesReplaced.Add($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] [File Replaced] {entry.FullName} : {entry.Length} bytes");
                         }

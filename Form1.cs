@@ -303,7 +303,7 @@ namespace Snowrunner_Patcher
             toolStripStatusLabelInfoPatch.Visible = true;
             forceInstallToolStripMenuItem.Enabled = false;
 
-            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}"); ; });
+            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}");});
         }
 
         private void UpdateFormPatched()
@@ -313,6 +313,7 @@ namespace Snowrunner_Patcher
             ProgressBar.Value = 100;
             cf.ConfigData["Game"]["ModVersion"] = ModVersionReleased;
             ModVersionLabel.Text = "Mod Version Installed: " + ModVersionReleased;
+            CurrentVersionLabel.Text = "Mod Version Installed: " + ModVersionReleased;
             ModVersionLabel.ForeColor = Color.Green;
         }
 

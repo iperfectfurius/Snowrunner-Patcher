@@ -94,10 +94,15 @@ namespace Snowrunner_Parcher.Resources
         private static void ForceSave()
         {
             if (logInfo.Length == 0) return;
-
-            File.AppendAllText(fullLogPath, logInfo.ToString());
-
-            logInfo.Clear();
+            try
+            {
+                File.AppendAllText(fullLogPath, logInfo.ToString());
+                logInfo.Clear();
+            }
+            catch (Exception ex)
+            {
+                AddLineLog($"[ERROR] Error trying to save the LOG.");
+            }           
         }
     }
 }
