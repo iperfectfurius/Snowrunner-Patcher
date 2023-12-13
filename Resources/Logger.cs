@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace Snowrunner_Parcher.Resources
+namespace Snowrunner_Patcher.Resources
 {
     internal class Logger
     {

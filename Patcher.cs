@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
-using Snowrunner_Parcher.Resources;
+using Snowrunner_Patcher.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

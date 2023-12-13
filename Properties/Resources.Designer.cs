@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Snowrunner_Parcher.Properties {
+namespace Snowrunner_Patcher.Properties {
     using System;
     
     
