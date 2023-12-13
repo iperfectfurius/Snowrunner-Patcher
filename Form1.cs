@@ -11,9 +11,13 @@ using System.Text.Json.Nodes;
 using System.Runtime.CompilerServices;
 using Snowrunner_Parcher.Resources;
 using System.IO.Compression;
+using System.Media;
+using System.Runtime.InteropServices;
+
 
 namespace Snowrunner_Patcher
 {
+
     public partial class Form1 : Form
     {
         private string Token;
@@ -32,6 +36,7 @@ namespace Snowrunner_Patcher
         private string BackupFolder => cf.DirectoryConfig + "\\Backups";
         private string PatchingMode => cf.ConfigData["Game"]["PatchingMode"];
         private IProgress<ProgressInfo> ProgressPatcher;
+        SoundPlayer asterisk = new SoundPlayer(Snowrunner_Parcher.Properties.Resources.Windows_Background);
 
         delegate void ChangeText(string str);
         public Form1()
@@ -303,11 +308,12 @@ namespace Snowrunner_Patcher
             toolStripStatusLabelInfoPatch.Visible = true;
             forceInstallToolStripMenuItem.Enabled = false;
 
-            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}");});
+            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}"); });
         }
 
         private void UpdateFormPatched()
         {
+            asterisk.Play();
             UpdateModButton.Enabled = false;
             UpdateModButton.Text = "Patch Applied!";
             ProgressBar.Value = 100;
