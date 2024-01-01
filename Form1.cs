@@ -80,7 +80,11 @@ namespace Snowrunner_Patcher
             if (cf.ConfigData["ModPak"]["UrlVersion"] != null && cf.ConfigData["ModPak"]["UrlVersion"] != DEFAULT_VALUE)
                 MOD_VERSION_URL = cf.ConfigData["ModPak"]["UrlVersion"];
             else
+            {
                 cf.ConfigData["ModPak"]["UrlVersion"] = DEFAULT_VALUE;
+                MOD_VERSION_URL = "";
+            }
+                
 
             if (cf.ConfigData["ModPak"]["Token"] != null && cf.ConfigData["ModPak"]["Token"] != DEFAULT_VALUE)
                 Token = cf.ConfigData["ModPak"]["Token"];
@@ -104,7 +108,7 @@ namespace Snowrunner_Patcher
 
             if (versionPatch == null)
             {
-                CurrentVersionInstalled = "Not Found";
+                CurrentVersionInstalled = "Not Found in the modPak";
                 installedModPak.Dispose();
                 return false;
             }
@@ -258,6 +262,12 @@ namespace Snowrunner_Patcher
 
         private async Task<bool> CheckModVersion()
         {
+            if (MOD_VERSION_URL == "")
+            {
+                ContinueWithoutCheckingModVersion();
+                return true;
+            }
+           
             RestClient RestClient = new(MOD_VERSION_URL);
             RestRequest request = new RestRequest();
 
@@ -285,6 +295,7 @@ namespace Snowrunner_Patcher
             ShowModVersionReleased();
             return true;
         }
+       
         private void ShowNewModVersion(string version)
         {
             UpdateModButton.Enabled = true;
@@ -295,6 +306,13 @@ namespace Snowrunner_Patcher
         private void ShowModVersionReleased()
         {
             LastVersionLabel.Text += $" {ModVersionReleased}";
+        }
+        private void ContinueWithoutCheckingModVersion()
+        {
+            ModVersionReleased = "Unknown";
+            UpdateModButton.Enabled = true;
+            UpdateModButton.Text = "Update";
+            LastVersionLabel.Text += $" No link is provided in config.ini";
         }
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
