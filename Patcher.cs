@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
-using Snowrunner_Parcher.Resources;
+using Snowrunner_Patcher.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -66,9 +66,9 @@ namespace Snowrunner_Patcher
         }
         private void CreateBackupPakMod(string name = "")
         {
-            name += string.Join("_", DateTime.Now.ToString().Split(Path.GetInvalidFileNameChars()));
-            File.Copy(ModPath, BackupPath + $"\\{name}.pak");
-            AddLineLog("[Created Backup] :" + BackupPath + $"\\{name}.pak");
+            string currentDate = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            File.Copy(ModPath, BackupPath + $"\\{currentDate}{(name != "" ? $"_{name}": "")}.pak");
+            AddLineLog("[Created Backup] :" + BackupPath + $"\\{currentDate}{(name != "" ? $"_{name}" : "")}.pak");
         }
         public async Task<bool> PatchMod(string token = "", bool createBackup = true)
         {
@@ -121,6 +121,7 @@ namespace Snowrunner_Patcher
         private bool AdvancedPatch(string tempDownloadedFile)
         {
             PatchOlderVersionFiles(tempDownloadedFile);
+            File.Delete(tempDownloadedFile);
             return true;
         }
         private void PatchOlderVersionFiles(string newVersionPath)
@@ -144,7 +145,12 @@ namespace Snowrunner_Patcher
                         if (entry.LastWriteTime > DateTime.Parse("01/01/1981", System.Globalization.CultureInfo.InvariantCulture))
                         {
                             entry.ExtractToFile(tempPathToExtract + entry.Name);
-                            currentPatch.GetEntry(entry.FullName).Delete();
+
+                            if (currentPatch.GetEntry(entry.FullName) == null)
+                                tempFilesReplaced.Add($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] [WARNING] {entry.FullName} : The file does not exist");
+                            else
+                                currentPatch.GetEntry(entry.FullName)?.Delete();
+
                             currentPatch.CreateEntryFromFile(tempPathToExtract + entry.Name, entry.FullName);
                             tempFilesReplaced.Add($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] [File Replaced] {entry.FullName} : {entry.Length} bytes");
                         }
@@ -168,7 +174,7 @@ namespace Snowrunner_Patcher
         }
         public bool ReplaceLastBackup(string LastBackUp)
         {
-            CreateBackup("Replaced_ModPak_");
+            CreateBackup("Replaced_ModPak");
             File.Delete(ModPath);
             File.Copy(LastBackUp, ModPath);
 

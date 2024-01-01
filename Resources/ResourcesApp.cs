@@ -4,8 +4,8 @@ namespace Snowrunner_Patcher.Resources
     internal class ResourcesApp
     {
         public const string DEFAULT_VALUE = "Default";
-        //You can configure your own ModPak
-        public static string MOD_VERSION_URL = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/Version.txt";
+        //You can configure your own ModPak or edit the config.ini
+        public static string MOD_VERSION_URL = @"";
         public static string MOD_DOWNLOAD_URL = @"https://raw.githubusercontent.com/iperfectfurius/Snowrunner-balance/main/initial.pak";
 
         

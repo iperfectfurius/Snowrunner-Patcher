@@ -9,11 +9,15 @@ using System.Xml;
 using Newtonsoft.Json.Linq;
 using System.Text.Json.Nodes;
 using System.Runtime.CompilerServices;
-using Snowrunner_Parcher.Resources;
+using Snowrunner_Patcher.Resources;
 using System.IO.Compression;
+using System.Media;
+using System.Runtime.InteropServices;
+
 
 namespace Snowrunner_Patcher
 {
+
     public partial class Form1 : Form
     {
         private string Token;
@@ -32,6 +36,7 @@ namespace Snowrunner_Patcher
         private string BackupFolder => cf.DirectoryConfig + "\\Backups";
         private string PatchingMode => cf.ConfigData["Game"]["PatchingMode"];
         private IProgress<ProgressInfo> ProgressPatcher;
+        SoundPlayer asterisk = new SoundPlayer(Properties.Resources.Windows_Background);
 
         delegate void ChangeText(string str);
         public Form1()
@@ -57,6 +62,9 @@ namespace Snowrunner_Patcher
         }
         private void CheckConfig()
         {
+            Logger.logPath = cf.DirectoryConfig + "\\Logs";
+            LoadLogFile();
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(SaveLog);
 
             if (ModPakPath == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
 
@@ -75,16 +83,19 @@ namespace Snowrunner_Patcher
             if (cf.ConfigData["ModPak"]["UrlVersion"] != null && cf.ConfigData["ModPak"]["UrlVersion"] != DEFAULT_VALUE)
                 MOD_VERSION_URL = cf.ConfigData["ModPak"]["UrlVersion"];
             else
+            {
                 cf.ConfigData["ModPak"]["UrlVersion"] = DEFAULT_VALUE;
+                MOD_VERSION_URL = "";
+
+            }             
 
             if (cf.ConfigData["ModPak"]["Token"] != null && cf.ConfigData["ModPak"]["Token"] != DEFAULT_VALUE)
                 Token = cf.ConfigData["ModPak"]["Token"];
             else
                 cf.ConfigData["ModPak"]["Token"] = DEFAULT_VALUE;
 
-            Logger.logPath = cf.DirectoryConfig + "\\Logs";
-            LoadLogFile();
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(SaveLog);
+            cf.ConfigData["App"]["Version"] = APP_VERSION;
+
 
             CheckCurrentModVersionInstalled();
 
@@ -99,7 +110,7 @@ namespace Snowrunner_Patcher
 
             if (versionPatch == null)
             {
-                CurrentVersionInstalled = "Not Found";
+                CurrentVersionInstalled = "Not Found in the modPak";
                 installedModPak.Dispose();
                 return false;
             }
@@ -148,21 +159,13 @@ namespace Snowrunner_Patcher
         private async void CheckForUpdates()
         {
             //TODO remove and apply the config
-            await CheckAppVersion();
-            if (Token == null)
-                Token = await GetToken.GetTokenFromRequest();
-
-            if (Token != "Error") //Todo Handle error{}
+            if (!await CheckAppVersion())
             {
-                forceInstallToolStripMenuItem.Enabled = true;
-                await CheckModVersion();
-            }
-            else
-            {
-                forceInstallToolStripMenuItem.Enabled = false;
                 forceInstallToolStripMenuItem.ToolTipText = "Error on check new version";
                 AddLineLog($"[Error] Error Checking APP Version");
             }
+
+            if (await CheckModVersion()) forceInstallToolStripMenuItem.Enabled = true;
         }
         private async Task<bool> CheckAppVersion()
         {
@@ -261,9 +264,17 @@ namespace Snowrunner_Patcher
 
         private async Task<bool> CheckModVersion()
         {
+            if (MOD_VERSION_URL == "")
+            {
+                ContinueWithoutCheckingModVersion();
+                return true;
+            }
+           
             RestClient RestClient = new(MOD_VERSION_URL);
             RestRequest request = new RestRequest();
-            request.AddHeader("Authorization", $"token {Token}");
+
+            if (Token != null && Token != "") request.AddHeader("Authorization", $"token {Token}");
+
 
             RestResponse restResponse;
 
@@ -286,6 +297,7 @@ namespace Snowrunner_Patcher
             ShowModVersionReleased();
             return true;
         }
+       
         private void ShowNewModVersion(string version)
         {
             UpdateModButton.Enabled = true;
@@ -296,6 +308,13 @@ namespace Snowrunner_Patcher
         private void ShowModVersionReleased()
         {
             LastVersionLabel.Text += $" {ModVersionReleased}";
+        }
+        private void ContinueWithoutCheckingModVersion()
+        {
+            ModVersionReleased = "Unknown";
+            UpdateModButton.Enabled = true;
+            UpdateModButton.Text = "Update";
+            LastVersionLabel.Text += $" No link is provided in config.ini";
         }
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -309,16 +328,18 @@ namespace Snowrunner_Patcher
             toolStripStatusLabelInfoPatch.Visible = true;
             forceInstallToolStripMenuItem.Enabled = false;
 
-            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}"); ; });
+            Task.Run(() => { if (patcher.PatchMod(Token).Result) AddLineLog($"[Patch Mod Finished] {ModVersionReleased}"); });
         }
 
         private void UpdateFormPatched()
         {
+            asterisk.Play();
             UpdateModButton.Enabled = false;
             UpdateModButton.Text = "Patch Applied!";
             ProgressBar.Value = 100;
             cf.ConfigData["Game"]["ModVersion"] = ModVersionReleased;
             ModVersionLabel.Text = "Mod Version Installed: " + ModVersionReleased;
+            CurrentVersionLabel.Text = "Mod Version Installed: " + ModVersionReleased;
             ModVersionLabel.ForeColor = Color.Green;
         }
 
@@ -389,7 +410,7 @@ namespace Snowrunner_Patcher
 
         private void createBackupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            patcher.CreateBackup();
+            patcher.CreateBackup("ManualBackup");
         }
         private void UpdateReport(ProgressInfo info)
         {
