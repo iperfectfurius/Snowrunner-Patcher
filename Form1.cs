@@ -36,7 +36,7 @@ namespace Snowrunner_Patcher
         private string BackupFolder => cf.DirectoryConfig + "\\Backups";
         private string PatchingMode => cf.ConfigData["Game"]["PatchingMode"];
         private IProgress<ProgressInfo> ProgressPatcher;
-        SoundPlayer asterisk = new SoundPlayer(Properties.Resources.Windows_Background);
+        private SoundPlayer asterisk = new SoundPlayer(Properties.Resources.Windows_Background);
 
         delegate void ChangeText(string str);
         public Form1()
@@ -169,13 +169,13 @@ namespace Snowrunner_Patcher
         }
         private async Task<bool> CheckAppVersion()
         {
-            const string TempToken = "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";//Development key this has no sense in the future
+            
             string versionReleased = string.Empty;
 
             RestClient RestClient = new(APP_VERSION_URL);
             RestRequest request = new RestRequest();
             //TODO Remove on release
-            request.AddHeader("Authorization", $"token {TempToken}");
+            //request.AddHeader("Authorization", $"token {TempToken}");
             RestResponse restResponse;
 
             XmlDocument doc = new XmlDocument();
