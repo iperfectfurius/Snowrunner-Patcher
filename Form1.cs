@@ -62,6 +62,9 @@ namespace Snowrunner_Patcher
         }
         private void CheckConfig()
         {
+            Logger.logPath = cf.DirectoryConfig + "\\Logs";
+            LoadLogFile();
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(SaveLog);
 
             if (ModPakPath == null || cf.ConfigData["Game"]["ModsPath"] == "") IniConfig();
 
@@ -83,17 +86,16 @@ namespace Snowrunner_Patcher
             {
                 cf.ConfigData["ModPak"]["UrlVersion"] = DEFAULT_VALUE;
                 MOD_VERSION_URL = "";
-            }
-                
+
+            }             
 
             if (cf.ConfigData["ModPak"]["Token"] != null && cf.ConfigData["ModPak"]["Token"] != DEFAULT_VALUE)
                 Token = cf.ConfigData["ModPak"]["Token"];
             else
                 cf.ConfigData["ModPak"]["Token"] = DEFAULT_VALUE;
 
-            Logger.logPath = cf.DirectoryConfig + "\\Logs";
-            LoadLogFile();
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(SaveLog);
+            cf.ConfigData["App"]["Version"] = APP_VERSION;
+
 
             CheckCurrentModVersionInstalled();
 

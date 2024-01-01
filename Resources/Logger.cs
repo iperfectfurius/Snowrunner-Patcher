@@ -11,7 +11,7 @@ namespace Snowrunner_Patcher.Resources
 {
     internal class Logger
     {
-        private static readonly string logName = string.Join("_", DateTime.Now.ToString("dd_MM_yyyy").Split(Path.GetInvalidFileNameChars()));
+        private static readonly string logName = string.Join("_", DateTime.Now.ToString("yyyyMMdd").Split(Path.GetInvalidFileNameChars()));
         private const string EXTENSION = ".log";
         public static string logPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\" + Assembly.GetCallingAssembly().GetName().Name;
         public static string fullLogPath => logPath + "\\" + logName + EXTENSION;
@@ -101,7 +101,7 @@ namespace Snowrunner_Patcher.Resources
             }
             catch (Exception ex)
             {
-                AddLineLog($"[ERROR] Error trying to save the LOG.");
+                AddLineLog($"[ERROR] Error trying to save the LOG. {ex.Message}");
             }           
         }
     }
