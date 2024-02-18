@@ -87,7 +87,7 @@ namespace Snowrunner_Patcher.Resources
                 UseShellExecute = true
             });
         }
-        public static void SaveLog(object? ob, EventArgs e)
+        public static void SaveLog(object? ob, EventArgs? e)
         {
             ForceSave();
         }

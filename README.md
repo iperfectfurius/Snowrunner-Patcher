@@ -16,9 +16,9 @@ This can be very useful if you play with friends and you are changing things or 
 1. Download the latest update available on the releases page, and install it.
 2. The first time you open it, a dialog will show that indicates where the current ModPak is installed. You will check where the game is installed and go to `/en_us/preload/paks/client/**initial.pak**`.
 3. Open the config file (Menu -> Open Config File), then in the config file, you will need to put the link to your ModPak.
-4. Optionally, you can put the link of the mod version (this only needs to contain a version like 1.0.X.X).
+4. Optionally, you can put the link of the mod version (This only needs to contain a plain text containing version like 1.0.X.X).
 5. Optionally, a token if your ModPak is hosted on GitHub.
-6. Restart the application.
+6. Restart the application. (See if app is checking Mod Version provided.)
 
 > [!IMPORTANT]
 > The link provided for the ModPak download needs to be a raw content link, for example, https://raw.githubusercontent.com/...<br>
@@ -41,6 +41,6 @@ Most of this configurations can be configured  in the app.
 
 If you edit the config file, you will need to restart the application.
 
-
-
+![Configured](https://i.ibb.co/zHwypLc/Snag-61f0e2df.png)
+![No Configured](https://i.ibb.co/z7GzHDv/Snag-61f13a38.png)
 
