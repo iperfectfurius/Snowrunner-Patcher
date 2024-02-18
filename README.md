@@ -1,6 +1,3 @@
-# Readme in development
-Release soon!
-
 # Snowrunner-Patcher
 
 Snowrunner-Patcher is an app that automates a ModPak for the game.  
