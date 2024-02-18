@@ -158,7 +158,6 @@ namespace Snowrunner_Patcher
         }
         private async void CheckForUpdates()
         {
-            //TODO remove and apply the config
             if (!await CheckAppVersion())
             {
                 forceInstallToolStripMenuItem.ToolTipText = "Error on check new version";
@@ -174,8 +173,6 @@ namespace Snowrunner_Patcher
 
             RestClient RestClient = new(APP_VERSION_URL);
             RestRequest request = new RestRequest();
-            //TODO Remove on release
-            //request.AddHeader("Authorization", $"token {TempToken}");
             RestResponse restResponse;
 
             XmlDocument doc = new XmlDocument();
@@ -198,7 +195,7 @@ namespace Snowrunner_Patcher
             }
 
             versionReleased = doc["Project"]["PropertyGroup"]["AssemblyVersion"].InnerText;
-
+            
             bool SameVersion = versionReleased == APP_VERSION;
 
             if (!SameVersion)
@@ -221,12 +218,8 @@ namespace Snowrunner_Patcher
         {
             bool result = MessageBox.Show("New APP version released. Do you want to download?", "New Update Available", MessageBoxButtons.YesNo) == DialogResult.Yes;
 
-            //TODO Remove on release
-            const string TempToken = "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";//Development key this has no sense in the future
-
             RestClient RestClient = new(APP_REALEASED_VERSIONS_URL);
             RestRequest request = new RestRequest();
-            request.AddHeader("Authorization", $"token {TempToken}");
             RestResponse restResponse;
 
             try
@@ -249,7 +242,6 @@ namespace Snowrunner_Patcher
             {
                 OpenNewRelease((string)lastRelease["html_url"]);
             }
-            //toolStripStatusInfo.Tag = ;
             toolStripStatusInfo.Click += (e, ar) => OpenNewRelease((string)lastRelease["html_url"]);
         }
 
@@ -364,11 +356,6 @@ namespace Snowrunner_Patcher
                 UseShellExecute = true,
                 Arguments = BackupFolder
             });
-        }
-
-        private void replaceBackupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //Todo replace list of backups
         }
 
         private void lastBackupToolStripMenuItem_Click(object sender, EventArgs e)

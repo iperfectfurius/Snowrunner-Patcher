@@ -120,7 +120,7 @@
             // advancedPatchingToolStripMenuItem
             // 
             advancedPatchingToolStripMenuItem.Name = "advancedPatchingToolStripMenuItem";
-            advancedPatchingToolStripMenuItem.Size = new Size(177, 22);
+            advancedPatchingToolStripMenuItem.Size = new Size(180, 22);
             advancedPatchingToolStripMenuItem.Text = "Advanced Patching";
             advancedPatchingToolStripMenuItem.Click += advancedPatchingToolStripMenuItem_Click;
             // 
@@ -128,7 +128,7 @@
             // 
             openBackupsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createBackupToolStripMenuItem, openToolStripMenuItem, deleteAllToolStripMenuItem, replaceBackupToolStripMenuItem });
             openBackupsToolStripMenuItem.Name = "openBackupsToolStripMenuItem";
-            openBackupsToolStripMenuItem.Size = new Size(177, 22);
+            openBackupsToolStripMenuItem.Size = new Size(180, 22);
             openBackupsToolStripMenuItem.Text = "Backups";
             // 
             // createBackupToolStripMenuItem
@@ -158,37 +158,36 @@
             replaceBackupToolStripMenuItem.Name = "replaceBackupToolStripMenuItem";
             replaceBackupToolStripMenuItem.Size = new Size(186, 22);
             replaceBackupToolStripMenuItem.Text = "Replace Backup";
-            replaceBackupToolStripMenuItem.Click += replaceBackupToolStripMenuItem_Click;
             // 
             // lastBackupToolStripMenuItem
             // 
             lastBackupToolStripMenuItem.Name = "lastBackupToolStripMenuItem";
-            lastBackupToolStripMenuItem.Size = new Size(137, 22);
+            lastBackupToolStripMenuItem.Size = new Size(180, 22);
             lastBackupToolStripMenuItem.Text = "Last Backup";
             lastBackupToolStripMenuItem.Click += lastBackupToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(174, 6);
+            toolStripSeparator1.Size = new Size(177, 6);
             // 
             // deleteModPakToolStripMenuItem
             // 
             deleteModPakToolStripMenuItem.Name = "deleteModPakToolStripMenuItem";
-            deleteModPakToolStripMenuItem.Size = new Size(177, 22);
+            deleteModPakToolStripMenuItem.Size = new Size(180, 22);
             deleteModPakToolStripMenuItem.Text = "Delete ModPak";
             deleteModPakToolStripMenuItem.Click += deleteModPakToolStripMenuItem_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(174, 6);
+            toolStripSeparator2.Size = new Size(177, 6);
             // 
             // forceInstallToolStripMenuItem
             // 
             forceInstallToolStripMenuItem.Enabled = false;
             forceInstallToolStripMenuItem.Name = "forceInstallToolStripMenuItem";
-            forceInstallToolStripMenuItem.Size = new Size(177, 22);
+            forceInstallToolStripMenuItem.Size = new Size(180, 22);
             forceInstallToolStripMenuItem.Text = "Force Install";
             forceInstallToolStripMenuItem.Click += forceInstallToolStripMenuItem_Click;
             // 
